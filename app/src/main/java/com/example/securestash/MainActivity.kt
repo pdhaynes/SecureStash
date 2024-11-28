@@ -1,0 +1,268 @@
+package com.example.securestash
+
+import android.content.Context
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.os.Build
+import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.datastore.core.DataStore
+import com.example.securestash.Helpers.CredentialManager
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textview.MaterialTextView
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Might interfere with keyboard displacement
+//        enableEdgeToEdge()
+        setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.isabelline)
+        window.navigationBarColor = this.resources.getColor(R.color.rosybrown)
+
+        // region UI Variable Assignments
+
+        // region Signup UI Elements
+
+        val signupPinHeader: MaterialTextView = findViewById(R.id.signup_pin_header)
+
+        val signupPinField: TextInputEditText = findViewById(R.id.signup_pin_field)
+        signupPinField.filters = arrayOf(InputFilter.LengthFilter(6))
+
+        val signupConfirmPinHeader: MaterialTextView = findViewById(R.id.signup_pin_confirm_header)
+        val signupConfirmPinField: TextInputEditText = findViewById(R.id.signup_pin_confirm_field)
+        signupConfirmPinField.filters = arrayOf(InputFilter.LengthFilter(6))
+
+        val signupPinStatus: MaterialTextView = findViewById(R.id.signup_pin_status)
+        val signupConfirmPinStatus: MaterialTextView = findViewById(R.id.signup_pin_confirm_status)
+
+        val signupButton: MaterialButton = findViewById(R.id.signup_button)
+
+        // endregion
+
+        // region Login UI Elements
+
+        val loginPinHeader: MaterialTextView = findViewById(R.id.login_pin_header)
+        val loginPinField: TextInputEditText = findViewById(R.id.login_pin_field)
+        val loginPinStatus: MaterialTextView = findViewById(R.id.login_pin_status)
+
+        val loginButton: MaterialButton= findViewById(R.id.login_button)
+
+        // endregion
+
+        // endregion
+
+        // region Compartment Functions
+        fun shouldHideLoginItems(should: Boolean) {
+            if (should) {
+                loginPinHeader.visibility = View.GONE
+                loginPinField.visibility = View.GONE
+                loginButton.visibility = View.GONE
+
+                signupPinHeader.visibility = View.VISIBLE
+                signupPinField.visibility = View.VISIBLE
+
+                signupConfirmPinHeader.visibility = View.VISIBLE
+                signupConfirmPinField.visibility = View.VISIBLE
+
+                signupButton.visibility = View.VISIBLE
+            } else {
+                loginPinHeader.visibility = View.VISIBLE
+                loginPinField.visibility = View.VISIBLE
+                loginButton.visibility = View.VISIBLE
+
+                signupPinHeader.visibility = View.GONE
+                signupPinField.visibility = View.GONE
+
+                signupConfirmPinHeader.visibility = View.GONE
+                signupConfirmPinField.visibility = View.GONE
+
+                signupButton.visibility = View.GONE
+            }
+
+        }
+
+        fun userLogin() {
+            shouldHideLoginItems(false)
+
+            var inputPin = ""
+            val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
+
+            loginPinField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+
+                override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+
+                    val inputText = charSequence.toString()
+                    if (inputText.length < 6) {
+                        loginPinStatus.text = "PIN must be 6 digits."
+                        loginPinStatus.visibility = View.VISIBLE
+
+                        loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                    } else {
+                        loginPinStatus.visibility = View.GONE
+                        inputPin = inputText
+                    }
+                }
+
+                override fun afterTextChanged(editable: Editable?) {
+                }
+            })
+
+            loginButton.setOnClickListener() {
+                val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
+                val storedPin = CredentialManager().decryptData(
+                    sharedPreferences.getString(
+                        "user_pin_enc",
+                        null
+                    ).toString()
+                )
+
+                if (inputPin.length == 0) {
+                    val errMsg = "Please enter a pin."
+                    signupPinStatus.text = errMsg
+                    signupPinStatus.visibility = View.VISIBLE
+                    Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
+
+                    signupPinField.backgroundTintList =
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+                } else if (storedPin != inputPin){
+                    loginPinStatus.text = "PIN does not match PIN on record."
+                    loginPinStatus.visibility = View.VISIBLE
+
+                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                } else{
+                    val intent = Intent(this, FileDirectory::class.java)
+                    startActivity(intent)
+
+                    finish()
+                    }
+                }
+        }
+
+        fun userSignUp() {
+            shouldHideLoginItems(true)
+
+            var initialPass: String = ""
+            var confirmPass: String = ""
+
+            signupPinField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+
+                override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+
+                    val inputText = charSequence.toString()
+                    if (inputText.length < 6) {
+                        signupPinStatus.text = "PIN must be 6 digits."
+                        signupPinStatus.visibility = View.VISIBLE
+
+                        signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                    } else {
+                        signupPinStatus.visibility = View.GONE
+                        initialPass = inputText
+                    }
+                }
+
+                override fun afterTextChanged(editable: Editable?) {
+                }
+            })
+
+            signupConfirmPinField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+
+                override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+
+                    val inputText = charSequence.toString()
+                    if (inputText != initialPass) {
+                        signupConfirmPinStatus.text = "PINs do not match."
+                        signupConfirmPinStatus.visibility = View.VISIBLE
+
+                        signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                    }
+                    else {
+                        signupConfirmPinStatus.visibility = View.GONE
+                    }
+                    confirmPass = inputText
+                }
+
+                override fun afterTextChanged(editable: Editable?) {
+                }
+            })
+
+            signupButton.setOnClickListener() {
+                if (initialPass.length == 0) {
+                    val errMsg = "Please enter a pin."
+                    signupPinStatus.text = errMsg
+                    signupPinStatus.visibility = View.VISIBLE
+                    Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
+
+                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+                } else if (initialPass != confirmPass) {
+                    val errMsg = "PINs do not match."
+                    signupConfirmPinStatus.text = errMsg
+                    signupConfirmPinStatus.visibility = View.VISIBLE
+                    Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
+
+                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+
+                } else {
+                    // TODO
+                    // Put password into Cipher DB
+
+                    val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("user_pin_enc", CredentialManager().encryptData(initialPass))
+                    editor.apply()
+
+                    val intent = Intent(this, FileDirectory::class.java)
+                    startActivity(intent)
+
+                    finish()
+                }
+            }
+        }
+
+        // endregion
+        val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
+        val storedUserPin = sharedPreferences.getString("user_pin_enc", null)
+
+        Log.d("userpin", storedUserPin.toString())
+
+        if (storedUserPin.isNullOrEmpty()) {
+            userSignUp()
+        } else {
+            userLogin()
+        }
+
+    }
+
+
+
+}

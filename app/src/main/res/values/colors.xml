@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="spacecadet">#1B1B3A</color>
+    <color name="brandeisblue">#0166FF</color>
+    <color name="unblue">#3993DD</color>
+    <color name="isabelline">#F4EBE8</color>
+    <color name="chamoisee">#A77E58</color>
+    <color name="rust">#BA3F1D</color>
+    <color name="scarlet">#FF3A20</color>
+    <color name="rosybrown">#C39383</color>
+</resources>

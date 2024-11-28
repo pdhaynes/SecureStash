@@ -1,0 +1,148 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:id="@+id/content_display"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:background="@color/isabelline"
+    >
+
+    <ViewAnimator
+        android:id="@+id/animator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/pager_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+                android:id="@+id/shownDocument"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="User provided image"
+                android:cropToPadding="false"
+                android:fitsSystemWindows="true"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+            <com.example.securestash.ExternalPackages.VerticalViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+
+                />
+
+            <TextView
+                android:id="@+id/pages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="20dp"
+                android:gravity="start|left"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/use_external_pdf_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="48dp">
+
+            <ImageView
+                android:id="@+id/error_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="12dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/error_image"
+                android:gravity="center_horizontal"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="30sp"
+                />
+
+            <TextView
+                android:id="@+id/pdf_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/error_image"
+                android:gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/btnLoadExtern"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pdf_message"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
+
+    </ViewAnimator>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonOptions"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="72dp"
+        android:backgroundTint="@color/spacecadet"
+        android:gravity="center"
+
+        android:hint="File Options"
+
+        android:textColor="@android:color/white"
+        app:cornerRadius="8dp"
+        app:elevation="4dp"
+        app:icon="@drawable/ic_ellipsis_24"
+
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/white" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonClose"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:icon="@drawable/ic_close_24"
+        android:textColor="@android:color/white"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/spacecadet"
+
+        app:cornerRadius="8dp"
+
+        android:hint="File Options"
+
+        android:layout_gravity="end"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+
+        app:elevation="4dp"
+        android:gravity="center"
+
+        app:iconSize="24dp"
+        app:iconTint="@color/white"
+        />
+
+</RelativeLayout>

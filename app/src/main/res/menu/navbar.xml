@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/upload_document"
+        android:title="Upload File"
+        android:icon="@drawable/ic_document_24"
+        android:iconTint="@color/spacecadet"
+        />
+    <item
+        android:id="@+id/upload_image"
+        android:title="Upload Image"
+        android:icon="@drawable/ic_photo_24"
+        android:iconTint="@color/spacecadet"
+        />
+    <item
+        android:id="@+id/take_image"
+        android:title="Take Image"
+        android:icon="@drawable/ic_camera_24"
+        android:iconTint="@color/spacecadet"
+        />
+</menu>

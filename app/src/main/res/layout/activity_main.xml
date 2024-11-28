@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/isabelline"
+    android:fitsSystemWindows="true"
+    android:fillViewport="true"
+    android:isScrollContainer="true">
+
+        <LinearLayout
+            android:id="@+id/sign_up_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/securestashlogo"
+                android:id="@+id/securestashlogo"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/securestashtitle"
+                android:text="SecureStash"
+                android:textSize="36sp"
+                android:textColor="#1B1B3A"
+                android:textAlignment="center"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/securestashlogo"
+                android:fontFamily="@font/titillium_regular"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/login_pin_header"
+
+                android:text="Enter pin:"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+
+                android:textColor="@color/black"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="300dp"
+                android:layout_height="52dp"
+
+                android:id="@+id/login_pin_field"
+
+                android:layout_marginBottom="10dp"
+                android:autofillHints="password"
+                android:elevation="4dp"
+                android:fontFamily="@font/titillum_family"
+                android:hint="Enter pin here"
+                android:inputType="numberPassword"
+                android:padding="12dp"
+                android:textColor="#1B1B3A"
+                android:textColorHint="#8F8F8F"
+                android:background="@drawable/input_background"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:layout_margin="2dp"
+                android:maxLength="6"
+
+                android:visibility="gone"
+
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/login_pin_status"
+
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/rust"
+                android:fontFamily="@font/titillium_regular"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/signup_pin_header"
+
+                android:text="Create pin:"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+
+                android:textColor="@color/black"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="300dp"
+                android:layout_height="52dp"
+
+                android:id="@+id/signup_pin_field"
+
+                android:layout_marginBottom="10dp"
+                android:autofillHints="password"
+                android:elevation="4dp"
+                android:fontFamily="@font/titillum_family"
+                android:hint="Enter pin here"
+                android:inputType="numberPassword"
+                android:padding="12dp"
+                android:textColor="#1B1B3A"
+                android:textColorHint="#8F8F8F"
+                android:background="@drawable/input_background"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:layout_margin="2dp"
+                android:maxLength="6"
+
+                android:visibility="gone"
+
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/signup_pin_status"
+
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/rust"
+                android:fontFamily="@font/titillium_regular"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/signup_pin_confirm_header"
+
+                android:text="Confirm pin:"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+
+                android:textColor="@color/black"
+
+                android:visibility="gone"
+
+                />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signup_pin_confirm_field"
+                android:layout_width="300dp"
+
+                android:layout_height="52dp"
+
+                android:layout_gravity="center"
+                android:layout_margin="2dp"
+                android:layout_marginBottom="10dp"
+                android:autofillHints="password"
+                android:background="@drawable/input_background"
+                android:elevation="4dp"
+                android:fontFamily="@font/titillum_family"
+                android:hint="Re-enter pin here"
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                android:padding="12dp"
+                android:textColor="#1B1B3A"
+                android:textColorHint="#8F8F8F"
+                android:textSize="16sp"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/signup_pin_confirm_status"
+
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/rust"
+                android:fontFamily="@font/titillium_regular"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="Add email address:"
+                android:layout_gravity="center"
+                android:padding="2dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_field"
+                android:layout_width="300dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="6dp"
+                android:autofillHints="emailAddress"
+                android:elevation="4dp"
+                android:fontFamily="@font/titillum_family"
+                android:hint="(Optional) Recovery Email address"
+                android:inputType="text"
+                android:padding="12dp"
+                android:textColor="#1B1B3A"
+                android:textColorHint="#8F8F8F"
+                android:textSize="16sp"
+                android:background="@drawable/input_background"
+                android:layout_gravity="center"
+                android:layout_margin="2dp"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:text="Submit"
+                android:textSize="16sp"
+
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+                android:id="@+id/signup_button"
+
+                android:textColor="@color/white"
+                android:backgroundTint="@color/brandeisblue"
+                app:cornerRadius="8dp"
+
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:text="Login"
+                android:textSize="16sp"
+
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/titillium_regular"
+                android:id="@+id/login_button"
+
+                android:textColor="@color/brandeisblue"
+                android:backgroundTint="@color/white"
+                app:cornerRadius="8dp"
+
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+</ScrollView>
