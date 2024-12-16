@@ -1,14 +1,11 @@
 package com.example.securestash
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -16,11 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.datastore.core.DataStore
 import com.example.securestash.Helpers.CredentialManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.statusBarColor = this.resources.getColor(R.color.isabelline)
-        window.navigationBarColor = this.resources.getColor(R.color.rosybrown)
+        window.navigationBarColor = this.resources.getColor(R.color.paledogwood)
 
         // region UI Variable Assignments
 
@@ -114,18 +111,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.white))
+                    loginPinStatus.visibility = View.GONE
 
                     val inputText = charSequence.toString()
-                    if (inputText.length < 6) {
-                        loginPinStatus.text = "PIN must be 6 digits."
-                        loginPinStatus.visibility = View.VISIBLE
-
-                        loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
-                    } else {
-                        loginPinStatus.visibility = View.GONE
-                        inputPin = inputText
-                    }
+                    inputPin = inputText
                 }
 
                 override fun afterTextChanged(editable: Editable?) {
@@ -133,7 +123,6 @@ class MainActivity : AppCompatActivity() {
             })
 
             loginButton.setOnClickListener() {
-                val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
                 val storedPin = CredentialManager().decryptData(
                     sharedPreferences.getString(
                         "user_pin_enc",
@@ -143,17 +132,24 @@ class MainActivity : AppCompatActivity() {
 
                 if (inputPin.length == 0) {
                     val errMsg = "Please enter a pin."
-                    signupPinStatus.text = errMsg
-                    signupPinStatus.visibility = View.VISIBLE
+                    loginPinStatus.text = errMsg
+                    loginPinStatus.visibility = View.VISIBLE
                     Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
 
-                    signupPinField.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+                    loginPinField.backgroundTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
+
+                } else if (inputPin.length < 6) {
+                    val errMsg = "PIN must be 6 digits."
+                    loginPinStatus.text = errMsg
+                    loginPinStatus.visibility = View.VISIBLE
+
+                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
                 } else if (storedPin != inputPin){
                     loginPinStatus.text = "PIN does not match PIN on record."
                     loginPinStatus.visibility = View.VISIBLE
 
-                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                    loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
                 } else{
                     val intent = Intent(this, FileDirectory::class.java)
                     startActivity(intent)
@@ -174,14 +170,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.white))
 
                     val inputText = charSequence.toString()
                     if (inputText.length < 6) {
                         signupPinStatus.text = "PIN must be 6 digits."
                         signupPinStatus.visibility = View.VISIBLE
 
-                        signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                        signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.rust))
                     } else {
                         signupPinStatus.visibility = View.GONE
                         initialPass = inputText
@@ -197,14 +193,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.white))
+                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.white))
 
                     val inputText = charSequence.toString()
                     if (inputText != initialPass) {
                         signupConfirmPinStatus.text = "PINs do not match."
                         signupConfirmPinStatus.visibility = View.VISIBLE
 
-                        signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(baseContext, R.color.rust))
+                        signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.rust))
                     }
                     else {
                         signupConfirmPinStatus.visibility = View.GONE
@@ -216,8 +212,8 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            signupButton.setOnClickListener() {
-                if (initialPass.length == 0) {
+            signupButton.setOnClickListener {
+                if (initialPass.isEmpty()) {
                     val errMsg = "Please enter a pin."
                     signupPinStatus.text = errMsg
                     signupPinStatus.visibility = View.VISIBLE
@@ -250,10 +246,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // endregion
+
         val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
         val storedUserPin = sharedPreferences.getString("user_pin_enc", null)
-
-        Log.d("userpin", storedUserPin.toString())
+        val fileDirectory: File = File(filesDir, "Files")
+        if (!fileDirectory.exists()) {
+            fileDirectory.mkdir()
+        }
 
         if (storedUserPin.isNullOrEmpty()) {
             userSignUp()
@@ -262,7 +261,5 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
 
 }

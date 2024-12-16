@@ -9,6 +9,25 @@
     android:background="@color/isabelline"
     >
 
+    <RelativeLayout
+        android:id="@+id/no_items_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <TextView
+            android:id="@+id/no_items_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:hint="Looks pretty empty, upload items using below button."
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,20 +58,19 @@
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:backgroundTint="#0052CC"
-            app:icon="@drawable/ic_settings_24"
-            app:iconTint="@color/white"
+            android:layout_height="wrap_content"
             android:layout_gravity="end"
-            app:iconGravity="textStart"
-            app:cornerRadius="8dp"
-            app:iconPadding="0dp"
-
-            app:elevation="4dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginVertical="2dp"
+            android:layout_marginBottom="2dp"
+            android:backgroundTint="#0052CC"
             android:gravity="center"
-            />
+            app:cornerRadius="8dp"
+            app:elevation="4dp"
+
+            app:icon="@drawable/ic_settings_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/white" />
 
     </LinearLayout>
 
@@ -80,13 +98,48 @@
         android:icon="@drawable/ic_add_24"
         android:text="Upload Items"
         android:textColor="@color/white"
-        android:visibility="visible"
         app:backgroundTint="@color/spacecadet"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="@color/brandeisblue"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/directory_back_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/ic_back_24"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/white"
+        app:backgroundTint="@color/spacecadet"
+
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/directory_filter_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/ic_filter_24"
+
+        app:layout_constraintStart_toEndOf="@+id/main_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/white"
+        app:backgroundTint="@color/spacecadet"
+
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -101,11 +154,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
 
         android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
         android:visibility="gone"
 
-        app:iconTint="@color/spacecadet"
-        app:backgroundTint="@color/white"
-        app:rippleColor="@color/isabelline"
         />
 
 
@@ -119,13 +173,13 @@
         app:layout_constraintStart_toEndOf="@+id/back_fab"
         app:layout_constraintEnd_toStartOf="@+id/upload_image_fab"
         app:layout_constraintBottom_toBottomOf="parent"
-
         android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
         android:visibility="gone"
 
-        app:iconTint="@color/spacecadet"
-        app:backgroundTint="@color/white"
-        app:rippleColor="@color/isabelline"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -140,11 +194,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
 
         android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
         android:visibility="gone"
 
-        app:iconTint="@color/spacecadet"
-        app:backgroundTint="@color/white"
-        app:rippleColor="@color/isabelline"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -155,30 +210,95 @@
         android:src="@drawable/ic_camera_24"
 
         app:layout_constraintStart_toEndOf="@+id/upload_image_fab"
+        app:layout_constraintEnd_toStartOf="@+id/create_folder_fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
+        android:visibility="gone"
+
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/create_folder_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/ic_add_folder_24"
+
+        app:layout_constraintStart_toEndOf="@+id/take_photo_fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
 
         android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
         android:visibility="gone"
 
-        app:iconTint="@color/spacecadet"
-        app:backgroundTint="@color/white"
-        app:rippleColor="@color/isabelline"
         />
 
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/add_fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/selection_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-<!--        android:layout_marginEnd="28dp"-->
-<!--        android:layout_marginBottom="28dp"-->
-<!--        android:contentDescription="Add"-->
-<!--        android:src="@drawable/ic_add_24"-->
-<!--        app:tint="@color/white"-->
+        android:src="@drawable/ic_close_24"
 
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        android:backgroundTint="@color/spacecadet" />-->
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/selection_trash"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
+        android:visibility="gone"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/selection_trash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/ic_trash_24"
+
+        app:layout_constraintStart_toEndOf="@+id/selection_cancel"
+        app:layout_constraintEnd_toStartOf="@+id/selection_change_tag"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
+        android:visibility="gone"
+
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/selection_change_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/ic_tag_24"
+
+        app:layout_constraintStart_toEndOf="@+id/selection_trash"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+
+        android:visibility="gone"
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

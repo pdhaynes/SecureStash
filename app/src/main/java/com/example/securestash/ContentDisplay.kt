@@ -17,7 +17,9 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.securestash.ExternalPackages.PDFPagerAdapter
 import com.example.securestash.ExternalPackages.VerticalViewPager
+import com.example.securestash.Helpers.CryptographyHelper
 import com.google.android.material.button.MaterialButton
+import java.io.ByteArrayInputStream
 import java.io.File
 
 class ContentDisplay : AppCompatActivity() {
@@ -26,6 +28,10 @@ class ContentDisplay : AppCompatActivity() {
     private lateinit var animator: ViewAnimator
     private var pagerAdapter: PDFPagerAdapter? = null
     private var currentPosition: Int = 0
+    private lateinit var showImage: SubsamplingScaleImageView
+    private var currentRotation: Int = 0
+
+    private val cryptoHelper: CryptographyHelper = CryptographyHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +55,10 @@ class ContentDisplay : AppCompatActivity() {
             throw Exception("Intent extras not provided.")
         }
 
+        val file: File = File(itemPath)
+        val secretKey = cryptoHelper.getSecretKeyFromKeystore(file.name)
+        val decryptedFileBytes = cryptoHelper.decodeFile(file, secretKey).first
+
         val optionsButton: MaterialButton = findViewById(R.id.buttonOptions)
         optionsButton.setOnClickListener {
             Toast.makeText(this, "Clicked file options", Toast.LENGTH_SHORT).show()
@@ -61,54 +71,68 @@ class ContentDisplay : AppCompatActivity() {
 
         when (itemType) {
             "DOCUMENT" -> {
-                val file = File(itemPath)
 
-                if (file.exists()) {
-                    pager = findViewById(R.id.pager)
-                    pages = findViewById<TextView>(R.id.pages)
-                    animator = findViewById<ViewAnimator>(R.id.animator)
-                    (animator as? ViewAnimator)?.visibility = View.VISIBLE
+                pager = findViewById(R.id.pager)
+                pages = findViewById<TextView>(R.id.pages)
+                animator = findViewById<ViewAnimator>(R.id.animator)
+                (animator as? ViewAnimator)?.visibility = View.VISIBLE
 
-                    pager.visibility = View.VISIBLE
+                pager.visibility = View.VISIBLE
 
-                    findViewById<View>(R.id.btnLoadExtern).setOnClickListener { _: View? ->
-                        val toast = Toast.makeText(
-                            baseContext,
-                            "Implement an intent to show the pdf externally",
-                            Toast.LENGTH_SHORT
-                        )
-                        toast.show()
-                    }
-
-                    // For now it looks like I will just have to write this file to cache
-                    // TODO: Find out how to create a ParcelFileDescriptor from a MemoryFile
-                    val pdfFile = File(itemPath)
-                    if (pdfFile.exists()) {
-                        Log.d("Exists", "Ayup")
-                    }
-                    pagerAdapter = PDFPagerAdapter(baseContext, pdfFile)
-                    pager.adapter = pagerAdapter
-
-                    updatePageCounter()
-
-                    (pager as? VerticalViewPager)?.setOnPageChangeListener(object : SimpleOnPageChangeListener() {
-                        override fun onPageSelected(index: Int) {
-                            this@ContentDisplay.onPageSelected(index)
-                        }
-                    })
-                } else {
-                    Toast.makeText(this, "File does not exist: $itemPath", Toast.LENGTH_SHORT).show()
+                findViewById<View>(R.id.btnLoadExtern).setOnClickListener { _: View? ->
+                    val toast = Toast.makeText(
+                        this,
+                        "Implement an intent to show the pdf externally",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
                 }
+
+
+                // For now it looks like I will just have to write this file to cache
+                // TODO: Find out how to create a ParcelFileDescriptor from a MemoryFile
+//                    val memoryFile = MemoryFile("decrypted_pdf", decryptedFileBytes.size)
+//                    memoryFile.writeBytes(decryptedFileBytes, 0, 0, decryptedFileBytes.size)
+
+//                val memPDF = MemoryFile("temp_pdf", decryptedFileBytes.size)
+//                memPDF.writeBytes(decryptedFileBytes, 0, 0, decryptedFileBytes.size)
+
+
+                val pdfFile = File(baseContext.cacheDir, "pdf_temp.pdf")
+                pdfFile.writeBytes(decryptedFileBytes)
+
+                pagerAdapter = PDFPagerAdapter(this, pdfFile)
+                pager.adapter = pagerAdapter
+
+                updatePageCounter()
+
+                (pager as? VerticalViewPager)?.setOnPageChangeListener(object : SimpleOnPageChangeListener() {
+                    override fun onPageSelected(index: Int) {
+                        this@ContentDisplay.onPageSelected(index)
+                    }
+                })
 
             }
             "IMAGE" -> {
-                val showImage: SubsamplingScaleImageView = findViewById(R.id.shownDocument)
+                showImage = findViewById(R.id.shownDocument)
                 showImage.visibility = View.VISIBLE
 
-//                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decryptedFileBytes))
-//                showDocument.setImage(ImageSource.bitmap(bitmap))
-                val source = ImageSource.uri(itemPath)
-                showImage.setImage(source)
+                val rotateLeftButton: MaterialButton = findViewById(R.id.buttonRotateImageLeft)
+                rotateLeftButton.visibility = View.VISIBLE
+                rotateLeftButton.setOnClickListener {
+                    rotateImage(-90)
+                }
+
+                val rotateRightButton: MaterialButton = findViewById(R.id.buttonRotateImageRight)
+                rotateRightButton.visibility = View.VISIBLE
+                rotateRightButton.setOnClickListener {
+                    rotateImage(90)
+                }
+
+                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decryptedFileBytes))
+                showImage.setImage(ImageSource.bitmap(bitmap))
+//                val source = ImageSource.uri(itemPath)
+//                showImage.setImage(source)
             }
         }
 
@@ -122,5 +146,13 @@ class ContentDisplay : AppCompatActivity() {
     private fun onPageSelected(position: Int) {
         currentPosition = position
         updatePageCounter()
+    }
+
+    private fun rotateImage(degrees: Int) {
+        currentRotation = (currentRotation + degrees) % 360
+        if (currentRotation < 0) {
+            currentRotation += 360
+        }
+        showImage.setOrientation(currentRotation)
     }
 }

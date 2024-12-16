@@ -49,6 +49,59 @@
                 android:gravity="start|left"
                 android:textSize="18sp" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonRotateImageLeft"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="72dp"
+                android:backgroundTint="@color/spacecadet"
+                android:gravity="center"
+                android:hint="File Options"
+                android:textColor="@android:color/white"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:icon="@drawable/ic_arrow_left_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
+                app:iconTint="@color/white"
+
+                android:visibility="gone"
+
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonRotateImageRight"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="72dp"
+                android:backgroundTint="@color/spacecadet"
+                android:gravity="center"
+                android:hint="File Options"
+                android:textColor="@android:color/white"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:icon="@drawable/ic_arrow_right_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
+                app:iconTint="@color/white"
+
+                android:visibility="gone"
+
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="12dp"
+                />
+
+
         </RelativeLayout>
 
         <RelativeLayout

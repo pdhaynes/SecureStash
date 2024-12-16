@@ -8,10 +8,6 @@ import android.os.ParcelFileDescriptor
 import com.davemorrissey.labs.subscaleview.decoder.ImageDecoder
 import java.io.File
 
-class InvalidPageIndexException(message: String) : Exception(message) {
-    // You can add additional constructors if needed
-    constructor(pageIndex: Int, pageCount: Int) : this("Tried to access page of index $pageIndex but the page count is $pageCount")
-}
 
 /**
  * Decodes and renders a [PdfRenderer.Page] into a [Bitmap]
@@ -21,6 +17,11 @@ class PDFDecoder(
     private val file: File,
     private val scale: Float
 ) : ImageDecoder {
+
+    class InvalidPageIndexException(message: String) : Exception(message) {
+        // You can add additional constructors if needed
+        constructor(pageIndex: Int, pageCount: Int) : this("Tried to access page of index $pageIndex but the page count is $pageCount")
+    }
 
     override fun decode(context: Context?, uri: Uri): Bitmap {
         val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)

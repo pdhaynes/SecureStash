@@ -39,6 +39,10 @@ android {
 }
 
 dependencies {
+    val work_version = "2.9.1"
+    implementation("androidx.work:work-runtime-ktx:$work_version")
+    implementation("androidx.work:work-multiprocess:$work_version")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -57,6 +61,7 @@ dependencies {
 
     implementation(libs.androidx.datastore.core)
     implementation("com.google.android.material:material:1.9.0")
+    implementation("com.github.yukuku:ambilwarna:2.0.1")
 
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
