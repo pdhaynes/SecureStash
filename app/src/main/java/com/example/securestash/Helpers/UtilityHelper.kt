@@ -2,15 +2,20 @@ package com.example.securestash.Helpers
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.securestash.DataModels.ItemType
+import com.example.securestash.DataModels.Tag
+import com.example.securestash.LoadingScreen
 import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
@@ -24,22 +29,28 @@ object UtilityHelper {
         var filename: String? = null
 
         if (uri.scheme == "content") {
-            val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DISPLAY_NAME), null, null, null)
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    val target = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
-                    filename = if (target != -1) {
-                        it.getString(target)
-                    } else {
-                        "file_name"
+            try {
+                val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DISPLAY_NAME), null, null, null)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val target = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+                        filename = if (target != -1) {
+                            it.getString(target)
+                        } else {
+                            "file_name"
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                Log.e("URIException", e.message.toString())
+                "unknown_file_${System.currentTimeMillis()}"
             }
+
         } else if (uri.scheme == "file") {
             filename = File(uri.path).name
         }
 
-        return filename ?: "file_name"
+        return filename ?: "unknown_file_${System.currentTimeMillis()}"
     }
 
     fun renameDuplicateFile(file: File): File {
@@ -59,7 +70,7 @@ object UtilityHelper {
             val outputFile = File(targetDirectory, newFileName)
 
             val secretKey = cryptoHelper.generateSecretKey(newFileName)
-            
+
             val encryptResult = cryptoHelper.encodeFile(
                 context = context,
                 fileUri = uri,
@@ -79,12 +90,13 @@ object UtilityHelper {
         }
     }
 
-    fun queueFileEncodingTask(uri: Uri, context: Context, fileType: ItemType, isLocked: Boolean, targetDirectory: File) {
+    fun queueFileEncodingTask(uri: Uri, context: Context, fileType: ItemType, isLocked: Boolean, targetDirectory: File, loadingScreen: LoadingScreen, fileName: String) {
         val inputData = workDataOf(
             "uri" to uri.toString(),
             "fileType" to fileType.name,
             "isLocked" to isLocked,
-            "targetDirectory" to targetDirectory.absolutePath
+            "targetDirectory" to targetDirectory.absolutePath,
+            "fileName" to fileName
         )
 
         val fileEncodingWorkRequest = OneTimeWorkRequestBuilder<FileEncodingWorker>()
@@ -92,6 +104,27 @@ object UtilityHelper {
             .build()
 
         WorkManager.getInstance(context).enqueue(fileEncodingWorkRequest)
+
+        WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(fileEncodingWorkRequest.id)
+            .observeForever { workInfo ->
+                if (workInfo != null && workInfo.state.isFinished) {
+                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        val filePath = workInfo.outputData.getString("outputFilePath")
+                        val tempFilePath = workInfo.outputData.getString("originalFilePath")
+                        if (filePath != null) {
+                            val targetDir: File = File(filePath.split("/").dropLast(1).joinToString("/"))
+                            loadingScreen.addProgressToLoadingIndicator(1)
+                        }
+                        if (tempFilePath != null) {
+                            Log.d("DELETION", "Deleting file " + tempFilePath)
+                            Log.d("DELETION", File(tempFilePath).delete().toString())
+                        }
+                    } else if (workInfo.state == WorkInfo.State.FAILED) {
+                        loadingScreen.addProgressToLoadingIndicator(1)
+                    }
+                }
+            }
     }
 
     fun addOrUpdateTagForDirectory(tagFile: File, targetDirectoryPath: File, color: Int, tagName: String) {
@@ -115,6 +148,50 @@ object UtilityHelper {
             Log.e("TagHandler", "Error updating tag file: ${e.message}", e)
         }
     }
+
+    fun getMostRecentTags(tagFile: File): List<Tag> {
+        val jsonTagList = if (tagFile.exists()) {
+            val content = tagFile.readText()
+            if (content.isNotBlank()) JSONObject(content) else JSONObject()
+        } else {
+            JSONObject()
+        }
+
+        val tagList = mutableListOf<Tag>()
+        for (tagFilePath in jsonTagList.keys()) {
+            if (tagList.count() >= 5) {
+                return tagList
+            }
+
+            val tagObject: JSONObject = jsonTagList[tagFilePath] as JSONObject
+            val comparableTag: Tag = Tag(
+                Name = tagObject["tag"].toString(),
+                Color = tagObject["color"] as Int
+            )
+
+            if (!tagList.contains(comparableTag)) {
+                tagList.add(comparableTag)
+            }
+        }
+
+        return tagList
+    }
+
+    fun getLuminance(color: Int): Double {
+        val red = Color.red(color) / 255.0
+        val green = Color.green(color) / 255.0
+        val blue = Color.blue(color) / 255.0
+
+        return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+    }
+
+    fun getTextColorForBackground(backgroundColor: Int): Int {
+        return if (getLuminance(backgroundColor) > 0.5) {
+            Color.BLACK
+        } else {
+            Color.WHITE
+        }
+    }
 }
 
 class FileEncodingWorker(
@@ -131,10 +208,14 @@ class FileEncodingWorker(
             val fileType = ItemType.valueOf(inputData.getString("fileType") ?: "DEFAULT") // Ensure to pass fileType properly
             val isLocked = inputData.getBoolean("isLocked", false)
             val targetDirectory = File(inputData.getString("targetDirectory") ?: "")
+            val fileName = inputData.getString("fileName") ?: "unknown_filename"
+
+//            Log.d("WORKER-FileType", fileType.toString())
+//            Log.d("WORKER-isLocked", isLocked.toString())
+//            Log.d("WORKER-targetDirectory", targetDirectory.toString())
 
             if (uri != null) {
-                val originalFileName = UtilityHelper.getFileNameFromUri(contentResolver, uri)
-                val newFileName = "${originalFileName.split(".").first()}_${System.currentTimeMillis()}"
+                val newFileName = "${fileName.split(".").first()}_${System.currentTimeMillis()}"
 
                 val outputFile = File(targetDirectory, newFileName)
 
@@ -152,7 +233,12 @@ class FileEncodingWorker(
                     fileData = encryptResult
                 )
 
-                return Result.success()
+                val outputData = workDataOf(
+                    "outputFilePath" to outputFile.absolutePath,
+                    "originalFilePath" to uri.toString()
+                )
+
+                return Result.success(outputData)
             } else {
                 return Result.failure()
             }

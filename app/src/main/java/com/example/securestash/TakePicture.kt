@@ -28,6 +28,7 @@ import com.example.securestash.Helpers.UtilityHelper
 import com.example.securestash.Helpers.UtilityHelper.getFileNameFromUri
 import com.example.securestash.Helpers.UtilityHelper.renameDuplicateFile
 import com.example.securestash.Interfaces.DirectoryContentLoader
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -122,16 +123,37 @@ class TakePicture : AppCompatActivity() {
             takePhoto(object : PhotoCaptureCallback {
                 override fun onPhotoCaptured(photoUri: String?) {
                     if (photoUri != null) {
-                        UtilityHelper.copyFileToAppDirectory(
-                            uri = Uri.parse(photoUri),
-                            contentResolver = this@TakePicture.contentResolver,
-                            context = this@TakePicture,
-                            fileType = ItemType.IMAGE,
-                            isLocked = false,
-                            targetDirectory = File(itemPath),
-                        )
+                        val uri = Uri.parse(photoUri)
+                        var imageBytes: ByteArray? = null
+                        val inputStream: InputStream? = baseContext.contentResolver.openInputStream(uri)
+                        inputStream?.use { stream ->
+                            val outputStream = ByteArrayOutputStream()
+                            val buffer = ByteArray(1024)
+                            var bytesRead: Int
+                            while (stream.read(buffer).also { bytesRead = it } != -1) {
+                                outputStream.write(buffer, 0, bytesRead)
+                            }
+                            imageBytes = outputStream.toByteArray()
+                        }
+
+                        val tempFileDirectory: File = File(filesDir, "Temp")
+                        if (!tempFileDirectory.exists()) {
+                            tempFileDirectory.mkdir()
+                        }
+
+                        val tempFile: File = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
+                            contentResolver = baseContext.contentResolver,
+                            uri = uri
+                        ))
+
+                        FileOutputStream(tempFile).use { outputStream ->
+                            outputStream.write(imageBytes)
+                        }
+
                         setResult(RESULT_OK)
-                        back()
+                        val intent = Intent(this@TakePicture, LoadingScreen::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 }
             })
@@ -139,7 +161,7 @@ class TakePicture : AppCompatActivity() {
 
         binding.buttonBack.setOnClickListener {
             setResult(RESULT_CANCELED)
-            back()
+            finish()
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -217,10 +239,6 @@ class TakePicture : AppCompatActivity() {
                 }
             }
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun back() {
-        finish()
     }
 
     override fun onDestroy() {

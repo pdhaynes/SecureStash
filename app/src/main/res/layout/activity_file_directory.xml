@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:hint="Looks pretty empty, upload items using below button."
+            android:text="Looks pretty empty, upload items using below button."
             android:gravity="center"
             android:padding="8dp"
             android:textSize="18sp"

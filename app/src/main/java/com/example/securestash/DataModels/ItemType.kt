@@ -11,15 +11,15 @@ enum class ItemType(val typeBytes: ByteArray) {
 
     companion object {
         fun fromByteArray(bytes: ByteArray): ItemType? {
-            Log.d("MetadataBytes", bytes.contentToString())
-//            for (item in entries) {
-//                Log.d("Item", item.typeBytes.contentToString())
-//            }
             return entries.find { it.typeBytes.contentEquals(bytes) }
         }
 
         fun fromEnum(itemType: ItemType): ByteArray {
             return itemType.typeBytes
+        }
+
+        fun fromName(itemName: String): ItemType? {
+            return entries.find { it.name.equals(itemName) }
         }
     }
 }

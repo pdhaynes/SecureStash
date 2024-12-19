@@ -16,6 +16,7 @@ import com.example.securestash.ContentDisplay
 import com.example.securestash.DataModels.DirectoryItem
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.FileDirectory
+import com.example.securestash.Helpers.UtilityHelper
 import com.example.securestash.R
 import org.json.JSONObject
 import java.io.File
@@ -96,7 +97,7 @@ class DirectoryAdapter(
                     val tagName = tagInfo.getString("tag")
 
                     val tagColor = tagInfo.getInt("color")
-                    val textColor = getTextColorForBackground(tagColor)
+                    val textColor = UtilityHelper.getTextColorForBackground(tagColor)
 
                     itemTag.text = tagName
                     itemTag.backgroundTintList = ColorStateList.valueOf(tagColor)
@@ -161,22 +162,6 @@ class DirectoryAdapter(
                 true
             }
         }
-    }
-}
-
-fun getLuminance(color: Int): Double {
-    val red = Color.red(color) / 255.0
-    val green = Color.green(color) / 255.0
-    val blue = Color.blue(color) / 255.0
-
-    return 0.2126 * red + 0.7152 * green + 0.0722 * blue
-}
-
-fun getTextColorForBackground(backgroundColor: Int): Int {
-    return if (getLuminance(backgroundColor) > 0.5) {
-        Color.BLACK
-    } else {
-        Color.WHITE
     }
 }
 

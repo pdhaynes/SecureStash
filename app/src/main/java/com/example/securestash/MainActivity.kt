@@ -254,6 +254,13 @@ class MainActivity : AppCompatActivity() {
             fileDirectory.mkdir()
         }
 
+        val tempDirectory: File = File(filesDir, "Temp")
+        if (tempDirectory.exists()) {
+            for (file in tempDirectory.listFiles()) {
+                file.delete()
+            }
+        }
+
         if (storedUserPin.isNullOrEmpty()) {
             userSignUp()
         } else {
