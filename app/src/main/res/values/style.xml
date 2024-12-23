@@ -13,4 +13,8 @@
         <item name="shapeAppearance">@style/CustomShapeAppearance</item>
         <item name="android:color">#EBEBEB</item>
     </style>
+    <style name="RoundedShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">25%</item> <!-- Makes it fully circular -->
+    </style>
 </resources>
