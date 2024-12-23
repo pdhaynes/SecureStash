@@ -78,7 +78,7 @@ class LoadingScreen : AppCompatActivity() {
 
             when (loadingType) {
                 "DELETE" -> {
-                    val fileDirectory: File = File(filesDir, "Files")
+                    val fileDirectory = File(filesDir, "Files")
                     if (!fileDirectory.exists()) {
                         fileDirectory.mkdir()
                     }
@@ -92,10 +92,13 @@ class LoadingScreen : AppCompatActivity() {
                         }
                     }
 
+                    val intent: Intent
                     if (accountDeleted) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
+                        intent = Intent(this, MainActivity::class.java)
+                    } else {
+                        intent = Intent(this, FileDirectory::class.java)
                     }
+                    startActivity(intent)
                     finish()
                 }
                 "ENCODE" -> {
