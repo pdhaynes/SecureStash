@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                         signupPinStatus.text = "PIN must be 6 digits."
                         signupPinStatus.visibility = View.VISIBLE
 
-                        signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.rust))
+                        signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.scarlet))
                     } else {
                         signupPinStatus.visibility = View.GONE
                         initialPass = inputText
@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                         signupConfirmPinStatus.text = "PINs do not match."
                         signupConfirmPinStatus.visibility = View.VISIBLE
 
-                        signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.rust))
+                        signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.scarlet))
                     }
                     else {
                         signupConfirmPinStatus.visibility = View.GONE
@@ -219,14 +219,14 @@ class MainActivity : AppCompatActivity() {
                     signupPinStatus.visibility = View.VISIBLE
                     Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
 
-                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+                    signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
                 } else if (initialPass != confirmPass) {
                     val errMsg = "PINs do not match."
                     signupConfirmPinStatus.text = errMsg
                     signupConfirmPinStatus.visibility = View.VISIBLE
                     Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
 
-                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.rust))
+                    signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
 
                 } else {
                     // TODO
@@ -247,11 +247,19 @@ class MainActivity : AppCompatActivity() {
 
         // endregion
 
+        // TODO
+        // This is not a secure way to store user pins
         val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
         val storedUserPin = sharedPreferences.getString("user_pin_enc", null)
+
         val fileDirectory: File = File(filesDir, "Files")
         if (!fileDirectory.exists()) {
             fileDirectory.mkdir()
+        }
+
+        val statsFile: File = File(cacheDir, "stats.json")
+        if (!statsFile.exists()) {
+            statsFile.createNewFile()
         }
 
         val tempDirectory: File = File(filesDir, "Temp")
