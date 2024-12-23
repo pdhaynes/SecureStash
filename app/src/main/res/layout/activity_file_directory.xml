@@ -13,19 +13,19 @@
         android:id="@+id/no_items_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/no_items_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Looks pretty empty, upload items using below button."
             android:gravity="center"
             android:padding="8dp"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            />
+            android:text="Looks pretty empty, upload items using below button."
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -45,7 +45,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:id="@+id/secure_stash_title"
             android:layout_weight="1"
             android:textSize="24sp"
@@ -67,6 +67,8 @@
             app:cornerRadius="8dp"
             app:elevation="4dp"
 
+            android:id="@+id/settings"
+
             app:icon="@drawable/ic_settings_24"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
@@ -82,11 +84,30 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginVertical="4dp"
 
+        android:paddingBottom="100dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
+        />
+
+    <ImageView
+        android:id="@+id/scroll_indicator"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_arrow_down_24"
+        android:layout_marginBottom="8dp"
+
+        app:tint="@color/spacecadet"
+        app:layout_constraintBottom_toBottomOf="@id/directory_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:translationY="-100dp"
+
+        android:visibility="gone"
         />
 
 
