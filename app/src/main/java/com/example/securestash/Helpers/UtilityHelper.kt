@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -127,6 +128,30 @@ object UtilityHelper {
             }
     }
 
+    fun queueFileDeletionTask(fileToDelete: File, context: Context, loadingScreen: LoadingScreen) {
+        val inputData = Data.Builder()
+            .putString("FILE", fileToDelete.toString())
+            .build()
+
+        val fileDeletionWorkRequest = OneTimeWorkRequestBuilder<FileDeletionWorker>()
+            .setInputData(inputData)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(fileDeletionWorkRequest)
+
+        WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(fileDeletionWorkRequest.id)
+            .observeForever { workInfo ->
+                if (workInfo != null && workInfo.state.isFinished) {
+                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        loadingScreen.addProgressToLoadingIndicator(1)
+                    } else if (workInfo.state == WorkInfo.State.FAILED) {
+                        loadingScreen.addProgressToLoadingIndicator(1)
+                    }
+                }
+            }
+    }
+
     fun addOrUpdateTagForDirectory(tagFile: File, targetDirectoryPath: File, color: Int, tagName: String) {
         try {
             val tagList = if (tagFile.exists()) {
@@ -147,6 +172,21 @@ object UtilityHelper {
         } catch (e: Exception) {
             Log.e("TagHandler", "Error updating tag file: ${e.message}", e)
         }
+    }
+
+    fun removeTag(tagFile: File, targetDirectoryPath: File) {
+        val tagList = if (tagFile.exists()) {
+            val content = tagFile.readText()
+            if (content.isNotBlank()) JSONObject(content) else JSONObject()
+        } else {
+            JSONObject()
+        }
+
+        if (tagList.has(targetDirectoryPath.toString())) {
+            tagList.remove(targetDirectoryPath.toString())
+        }
+
+        tagFile.writeText(tagList.toString())
     }
 
     fun getMostRecentTags(tagFile: File): List<Tag> {
@@ -192,6 +232,27 @@ object UtilityHelper {
             Color.WHITE
         }
     }
+
+    fun recursivelyGrabFileList(root: File): List<File> {
+        val fileList = mutableListOf<File>()
+
+        fun traverse(directory: File) {
+            if (directory.isDirectory) {
+                directory.listFiles()?.forEach { file ->
+                    fileList.add(file)
+                    if (file.isDirectory) {
+                        traverse(file)
+                    }
+                }
+            }
+        }
+
+        if (root.exists() && root.isDirectory) {
+            traverse(root)
+        }
+
+        return fileList
+    }
 }
 
 class FileEncodingWorker(
@@ -203,16 +264,11 @@ class FileEncodingWorker(
     override fun doWork(): Result {
         try {
             val uri = inputData.getString("uri")?.let { Uri.parse(it) }
-            val contentResolver = applicationContext.contentResolver
             val context = applicationContext
             val fileType = ItemType.valueOf(inputData.getString("fileType") ?: "DEFAULT") // Ensure to pass fileType properly
             val isLocked = inputData.getBoolean("isLocked", false)
             val targetDirectory = File(inputData.getString("targetDirectory") ?: "")
             val fileName = inputData.getString("fileName") ?: "unknown_filename"
-
-//            Log.d("WORKER-FileType", fileType.toString())
-//            Log.d("WORKER-isLocked", isLocked.toString())
-//            Log.d("WORKER-targetDirectory", targetDirectory.toString())
 
             if (uri != null) {
                 val newFileName = "${fileName.split(".").first()}_${System.currentTimeMillis()}"
@@ -242,6 +298,28 @@ class FileEncodingWorker(
             } else {
                 return Result.failure()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("FileEncodingWorker", "Error encoding file: ${e.message}")
+            return Result.failure()
+        }
+    }
+}
+
+class FileDeletionWorker(
+    context: Context,
+    workerParams: WorkerParameters
+) : Worker(context, workerParams) {
+    override fun doWork(): Result {
+        try {
+            val fileToDelete = File(inputData.getString("FILE"))
+            if (fileToDelete.isFile) {
+                fileToDelete.delete()
+            } else {
+                fileToDelete.deleteRecursively()
+            }
+            return Result.success()
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("FileEncodingWorker", "Error encoding file: ${e.message}")
