@@ -4,14 +4,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextUtils
 import android.util.Log
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -20,17 +18,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.util.Util
 import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Adapters.DirectoryAdapterListener
 import com.example.securestash.DataModels.DirectoryItem
 import com.example.securestash.DataModels.ItemType
-import com.example.securestash.DataModels.Tag
+import com.example.securestash.Dialogs.DialogChangeTag
+import com.example.securestash.Dialogs.DialogCreateFolder
 import com.example.securestash.Helpers.CryptographyHelper
 import com.example.securestash.Helpers.UtilityHelper
 import com.example.securestash.Interfaces.DirectoryContentLoader
@@ -191,6 +189,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             null
         }
 
+        val settingsButton: MaterialButton = findViewById(R.id.settings)
+        settingsButton.setOnClickListener {
+            val intent = Intent(baseContext, Settings::class.java)
+            startActivity(intent)
+        }
+
         // Main Buttons
         mainFab = findViewById(R.id.main_fab)
         backFab = findViewById(R.id.back_fab)
@@ -214,8 +218,26 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         directoryAdapter = DirectoryAdapter(dataList, currentDirectory)
         recyclerView.adapter = directoryAdapter
 
-        // region Button Click Logic
+        val scrollIndicator = findViewById<ImageView>(R.id.scroll_indicator)
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val itemCount = recyclerView.adapter?.itemCount ?: 0
 
+                if (lastVisibleItemPosition < itemCount - 1) {
+                    scrollIndicator.visibility = View.VISIBLE
+                } else {
+                    scrollIndicator.visibility = View.GONE
+                }
+            }
+        })
+
+        scrollIndicator.setOnClickListener {
+            recyclerView.smoothScrollToPosition(recyclerView.adapter?.itemCount ?: 0)
+        }
+
+        // region Button Click Logic
 
         mainFab.setOnClickListener {
             hideMainButtons()
@@ -243,8 +265,15 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         addFolderFab.setOnClickListener {
-            Toast.makeText(this, "Clicked add folder", Toast.LENGTH_SHORT).show()
-            showDialog()
+            val customDialog: DialogCreateFolder = DialogCreateFolder(
+                this,
+                directoryAdapter,
+                currentDirectory = currentDirectory,
+                loadDirContents = {
+                loadDirectoryContents(currentDirectory)
+            })
+
+            customDialog.show()
         }
 
         cancelSelectionFab.setOnClickListener {
@@ -254,8 +283,13 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         trashSelectionFab.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
             val deleteList = directoryAdapter.getSelectedItems()
+            if (deleteList.count() < 1) {
+                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val builder = AlertDialog.Builder(this)
 
             builder.setTitle("Confirm Deletion of ${deleteList.count()} items.")
 
@@ -279,6 +313,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                     val position = directoryAdapter.getItemList().indexOf(item)
                     if (position != -1) {
                         File(item.path).delete()
+                        UtilityHelper.removeTag(File(cacheDir, "tags.json"), File(item.path))
                         directoryAdapter.getItemList().removeAt(position) // Remove from the adapter's list
                         directoryAdapter.notifyItemRemoved(position)
                     }
@@ -298,207 +333,24 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         changeSelectionTagFab.setOnClickListener {
             val selectedList = directoryAdapter.getSelectedItems()
-
-            val builder = AlertDialog.Builder(this)
-
-            builder.setTitle("Change Tags for ${selectedList.count()} items.")
-
-            val userTagName = EditText(this).apply {
-                hint = "Tag name"
-                inputType = InputType.TYPE_CLASS_TEXT
+            if (selectedList.count() < 1) {
+                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
             }
-
-            var selectedColor = Color.RED
-
-            val buttonLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_HORIZONTAL
-                setPadding(0, 20, 0, 0)
-            }
-
-            val colorPickerButton = MaterialButton(this).apply {
-                text = "Choose Tag Color"
-                height = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    48f,
-                    resources.displayMetrics
-                ).toInt()
-            }
-
-            val colorSquare = View(this).apply {
-                val squareSize = resources.getDimensionPixelSize(R.dimen.color_square_size)
-                layoutParams = LinearLayout.LayoutParams(squareSize, squareSize).apply {
-                    setMargins(20, 0, 0, 0)
-                }
-                setBackgroundColor(selectedColor)
-            }
-
-            val tagPreviewLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER_HORIZONTAL
-            }
-
-            val previewTitle: TextView = TextView(this).apply {
-                text = "Tag preview:"
-            }
-
-            val previewTagLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_HORIZONTAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(2, 2, 2, 2)
-                }
-                setPadding(2, 2, 2, 2)
-            }
-
-            val previewTag = TextView(this).apply {
-                text = "Preview"
-                textSize = 16f
-
-                setTextColor(UtilityHelper.getTextColorForBackground(selectedColor))
-                ellipsize = TextUtils.TruncateAt.END
-                isSingleLine = true
-
-                val padding = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    6f,
-                    resources.displayMetrics
-                ).toInt()
-                setPadding(padding, padding, padding, padding)
-
-                val drawable = ContextCompat.getDrawable(context, R.drawable.rounded_background)?.mutate()
-                drawable?.setTint(selectedColor)
-                background = drawable
-            }
-
-            userTagName.doOnTextChanged { text, start, before, count ->
-                if (count == 0) {
-                    previewTag.text = "Preview"
-                } else {
-                    previewTag.text = text
-                }
-            }
-
-            colorPickerButton.setOnClickListener {
-                val colorDialog = AmbilWarnaDialog(this, selectedColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {
-                    override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
-                        selectedColor = color
-                        colorSquare.setBackgroundColor(color)
-                        previewTag.background.setTint(color)
-                        previewTag.setTextColor(UtilityHelper.getTextColorForBackground(color))
-                    }
-
-                    override fun onCancel(dialog: AmbilWarnaDialog?) {}
-                })
-                colorDialog.show()
-            }
-
-            buttonLayout.addView(colorPickerButton)
-            buttonLayout.addView(colorSquare)
-
-            val recentTagsLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER_HORIZONTAL
-            }
-
-            val recentTitle: TextView = TextView(this).apply {
-                text = "Recent tags:"
-            }
-
-            recentTagsLayout.addView(recentTitle)
-
-            tagPreviewLayout.addView(previewTitle)
-            previewTagLayout.addView(previewTag)
-            tagPreviewLayout.addView(previewTagLayout)
-
-            val listOfRecentTags: List<Tag> = UtilityHelper.getMostRecentTags(File(cacheDir, "tags.json"))
-            listOfRecentTags.forEach { tag ->
-                val singleTagLayout = LinearLayout(this).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    gravity = Gravity.CENTER_HORIZONTAL
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(2, 2, 2, 2)
-                    }
-                    setPadding(2, 2, 2, 2)
-                }
-
-                val tagName = TextView(this).apply {
-                    text = tag.Name
-                    textSize = 16f
-
-                    setTextColor(UtilityHelper.getTextColorForBackground(tag.Color))
-                    ellipsize = TextUtils.TruncateAt.END
-                    isSingleLine = true
-
-                    val padding = TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        6f,
-                        resources.displayMetrics
-                    ).toInt()
-                    setPadding(padding, padding, padding, padding)
-
-                    val drawable = ContextCompat.getDrawable(context, R.drawable.rounded_background)?.mutate()
-                    drawable?.setTint(tag.Color)
-                    background = drawable
-                }
-
-                singleTagLayout.addView(tagName)
-                recentTagsLayout.addView(singleTagLayout)
-
-                tagName.setOnClickListener {
-                    userTagName.setText(tag.Name)
-                    selectedColor = tag.Color
-                    previewTag.text = tag.Name
-                    previewTag.background.setTint(tag.Color)
-                    colorSquare.setBackgroundColor(tag.Color)
-                }
-            }
-
-            val tagLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                addView(recentTagsLayout, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-                addView(tagPreviewLayout, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            }
-
-            val layout = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(50, 20, 50, 20)
-                addView(userTagName)
-                addView(tagLayout)
-                addView(buttonLayout)
-            }
-
-            builder.setView(layout)
-
-            builder.setPositiveButton("OK") { dialog, _ ->
-                val tagName = userTagName.text.toString()
-                if (tagName.isNotEmpty()) {
-                    val tagFile: File = File(cacheDir, "tags.json")
-                    for (item in selectedList) {
-                        UtilityHelper.addOrUpdateTagForDirectory(tagFile, File(item.path), selectedColor, tagName)
-                    }
-                    selectedList.clear()
-                    loadDirectoryContents(userSpecifiedDirectory)
-                    dialog.dismiss()
-                } else {
-                    Toast.makeText(this, "Tag name cannot be empty!", Toast.LENGTH_SHORT).show()
-                }
-                directoryAdapter.disableSelectionMode()
-                hideSelectionButtons()
-                showMainButtons()
-            }
-
-            builder.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            builder.show()
+           val customDialog: DialogChangeTag = DialogChangeTag(
+               this,
+               directoryAdapter,
+               loadDirContents = {
+                   loadDirectoryContents(currentDirectory)
+               },
+               hideSelectionButtons = {
+                   hideSelectionButtons()
+               },
+               showMainButtons = {
+                   showMainButtons()
+               },
+           )
+            customDialog.show()
         }
 
         if (currentDirectory == File(filesDir, "Files")) {
@@ -575,10 +427,18 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     override fun onPause() {
         super.onPause()
+        Log.d("123456", "PAUSED")
         directoryAdapter.disableSelectionMode()
         hideUploadButtons()
         hideSelectionButtons()
         showMainButtons()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("123456", "RESUMED")
+        Log.d("123456", currentDirectory.toString())
+        loadDirectoryContents(currentDirectory)
     }
 
     private fun showDialog() {
@@ -710,6 +570,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         val intent = Intent(this, LoadingScreen::class.java)
         intent.putExtra("SPECIFIED_DIR", currentDirectory.toString())
         intent.putExtra("ITEM_TYPE", itemType.name)
+        intent.putExtra("LOAD_TYPE", "ENCODE")
 
         startActivity(intent)
         finish()
