@@ -33,20 +33,19 @@ class Settings : AppCompatActivity() {
 
         val deleteAccount: MaterialButton = findViewById(R.id.delete_all_data_and_account)
         deleteAccount.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setMessage("Are you certain? This will delete ALL files and directories made in the app as well as removing all login information")
+                .setPositiveButton("DELETE ALL DATA AND ACCOUNT") { _, _ ->
+                    val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
 
-        AlertDialog.Builder(this)
-            .setMessage("Are you certain? This will delete ALL files and directories made in the app as well as removing all login information")
-            .setPositiveButton("DELETE ALL DATA AND ACCOUNT") { _, _ ->
-                val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
+                    editor.remove("user_pin_enc")
+                    editor.apply()
 
-                editor.remove("user_pin_enc")
-                editor.apply()
-
-                showLoadingScreen(dataDir, true)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+                    showLoadingScreen(dataDir, true)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         val deleteData: MaterialButton = findViewById(R.id.delete_all_data)
