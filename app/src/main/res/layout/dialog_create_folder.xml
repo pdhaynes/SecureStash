@@ -30,7 +30,7 @@
         android:layout_margin="8dp"
         >
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="120dp"
+            android:layout_width="0dp"
             android:layout_height="52dp"
 
             android:id="@+id/user_folder_input"
@@ -63,7 +63,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="120dp"
+            android:layout_width="0"
             android:layout_height="52dp"
 
             android:id="@+id/user_tag_input"

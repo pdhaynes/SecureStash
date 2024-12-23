@@ -2,7 +2,6 @@ package com.example.securestash.Helpers
 
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore

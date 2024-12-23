@@ -22,7 +22,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.util.Util
 import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Adapters.DirectoryAdapterListener
 import com.example.securestash.DataModels.DirectoryItem
@@ -91,12 +90,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                         imageBytes = outputStream.toByteArray()
                     }
 
-                    val tempFileDirectory: File = File(filesDir, "Temp")
+                    val tempFileDirectory = File(filesDir, "Temp")
                     if (!tempFileDirectory.exists()) {
                         tempFileDirectory.mkdir()
                     }
 
-                    val tempFile: File = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
+                    val tempFile = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
                         contentResolver = baseContext.contentResolver,
                         uri = uri
                     ))
@@ -135,12 +134,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                     imageBytes = outputStream.toByteArray()
                 }
 
-                val tempFileDirectory: File = File(filesDir, "Temp")
+                val tempFileDirectory = File(filesDir, "Temp")
                 if (!tempFileDirectory.exists()) {
                     tempFileDirectory.mkdir()
                 }
 
-                val tempFile: File = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
+                val tempFile = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
                     contentResolver = baseContext.contentResolver,
                     uri = uri
                 ))
@@ -176,9 +175,8 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.statusBarColor = this.resources.getColor(R.color.brandeisblue)
-        window.navigationBarColor = this.resources.getColor(R.color.paledogwood)
+        window.statusBarColor = this.getColor(R.color.brandeisblue)
+        window.navigationBarColor = this.getColor(R.color.paledogwood)
 
         val specifiedDir = intent.getStringExtra("SPECIFIED_DIR")
         userSpecifiedDirectory = if (specifiedDir != null) {
@@ -265,7 +263,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         addFolderFab.setOnClickListener {
-            val customDialog: DialogCreateFolder = DialogCreateFolder(
+            val customDialog = DialogCreateFolder(
                 this,
                 directoryAdapter,
                 currentDirectory = currentDirectory,
@@ -296,7 +294,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             val contentLayout = LinearLayout(this)
             contentLayout.orientation = LinearLayout.VERTICAL
 
-            val textView: TextView = TextView(this)
+            val textView = TextView(this)
             textView.text = "Are you sure you want to delete these ${deleteList.count()} items?"
 
             val itemListTextView = TextView(this)
@@ -337,7 +335,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-           val customDialog: DialogChangeTag = DialogChangeTag(
+           val customDialog = DialogChangeTag(
                this,
                directoryAdapter,
                loadDirContents = {
@@ -415,6 +413,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         showSelectionButtons()
     }
 
+    @Deprecated("Deprecated")
     override fun onBackPressed() {
         if (directoryAdapter.isSelectionMode) {
             directoryAdapter.disableSelectionMode()
@@ -439,87 +438,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         Log.d("123456", "RESUMED")
         Log.d("123456", currentDirectory.toString())
         loadDirectoryContents(currentDirectory)
-    }
-
-    private fun showDialog() {
-        val builder = AlertDialog.Builder(this)
-
-        builder.setTitle("Folder Name")
-
-        val userFolderName = EditText(this)
-        userFolderName.hint = "Folder name"
-        userFolderName.inputType = InputType.TYPE_CLASS_TEXT
-
-        val userTagName = EditText(this)
-        userTagName.hint = "Tag name"
-        userTagName.inputType = InputType.TYPE_CLASS_TEXT
-
-
-        var selectedColor = Color.WHITE
-
-        val buttonLayout = LinearLayout(this)
-        buttonLayout.orientation = LinearLayout.HORIZONTAL
-        buttonLayout.setPadding(0, 20, 0, 0)
-
-        val colorPickerButton = Button(this)
-        colorPickerButton.text = "Choose Tag Color"
-
-        val colorSquare = View(this)
-        val squareSize = resources.getDimensionPixelSize(R.dimen.color_square_size)
-        val squareParams = LinearLayout.LayoutParams(squareSize, squareSize)
-        squareParams.setMargins(20, 0, 0, 0)
-        colorSquare.layoutParams = squareParams
-        colorSquare.setBackgroundColor(selectedColor)
-
-        colorPickerButton.setOnClickListener {
-            val colorDialog = AmbilWarnaDialog(this, selectedColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {
-                override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
-                    selectedColor = color
-                    colorSquare.setBackgroundColor(color)
-                }
-
-                override fun onCancel(dialog: AmbilWarnaDialog?) {
-                }
-            })
-            colorDialog.show()
-        }
-
-        buttonLayout.addView(colorPickerButton)
-        buttonLayout.addView(colorSquare)
-
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-        layout.setPadding(50, 20, 50, 20)
-        layout.addView(userFolderName)
-        layout.addView(userTagName)
-        layout.addView(buttonLayout)
-
-        builder.setView(layout)
-
-        builder.setPositiveButton("OK") { dialog, _ ->
-            val inputText = userFolderName.text.toString()
-            val tagName = userTagName.text.toString()
-            if (inputText.isNotEmpty()) {
-                val newDir = File(currentDirectory, inputText)
-                newDir.mkdir()
-
-                if (tagName.isNotEmpty()) {
-                    val tagFile: File = File(cacheDir, "tags.json")
-                    UtilityHelper.addOrUpdateTagForDirectory(tagFile, newDir, selectedColor, tagName)
-                }
-
-                loadDirectoryContents(userSpecifiedDirectory)
-                dialog.dismiss()
-            } else {
-                Toast.makeText(this, "Folder name cannot be empty!", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        builder.setNegativeButton("Cancel") { dialog, _ ->
-            dialog.cancel()
-        }
-
-        builder.show()
     }
 
     override fun loadDirectoryContents(selectedDirectory: File?) {

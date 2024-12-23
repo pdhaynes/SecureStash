@@ -1,17 +1,13 @@
 package com.example.securestash
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.securestash.DataModels.ItemType
-import com.example.securestash.Helpers.UtilityHelper
 import com.google.android.material.button.MaterialButton
 import java.io.File
 
@@ -28,12 +24,11 @@ class Settings : AppCompatActivity() {
 
         val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.statusBarColor = this.resources.getColor(R.color.brandeisblue)
 
         val changePassword: MaterialButton = findViewById(R.id.change_password)
         changePassword.setOnClickListener {
-            TODO() // Show some sort of dialog to change the user pin for the account
+            TODO()
         }
 
         val deleteAccount: MaterialButton = findViewById(R.id.delete_all_data_and_account)

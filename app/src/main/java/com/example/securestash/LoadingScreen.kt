@@ -78,7 +78,6 @@ class LoadingScreen : AppCompatActivity() {
 
             when (loadingType) {
                 "DELETE" -> {
-                    Log.d("LoadingType", "DELETE")
                     val fileDirectory: File = File(filesDir, "Files")
                     if (!fileDirectory.exists()) {
                         fileDirectory.mkdir()
@@ -88,7 +87,6 @@ class LoadingScreen : AppCompatActivity() {
 
                     for (appTask in tasks) {
                         val taskInfo = appTask.taskInfo
-                        Log.d("TaskInfo", taskInfo.baseIntent.component!!.className)
                         if (taskInfo.baseIntent.component!!.className == "com.example.securestash.MainActivity") {
                             appTask.finishAndRemoveTask()
                         }
@@ -101,7 +99,6 @@ class LoadingScreen : AppCompatActivity() {
                     finish()
                 }
                 "ENCODE" -> {
-                    Log.d("LoadingType", "ENCODE")
                     val intent = Intent(this, FileDirectory::class.java)
                     intent.putExtra("SPECIFIED_DIR", specifiedDirectory.toString())
                     startActivity(intent)
