@@ -1,14 +1,12 @@
 package com.example.securestash
 
+import android.content.ClipData.Item
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -20,20 +18,25 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Adapters.DirectoryAdapterListener
 import com.example.securestash.DataModels.DirectoryItem
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Dialogs.DialogChangeTag
 import com.example.securestash.Dialogs.DialogCreateFolder
+import com.example.securestash.Helpers.Cache
+import com.example.securestash.Helpers.Config
 import com.example.securestash.Helpers.CryptographyHelper
 import com.example.securestash.Helpers.UtilityHelper
 import com.example.securestash.Interfaces.DirectoryContentLoader
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.materialswitch.MaterialSwitch
 import yuku.ambilwarna.AmbilWarnaDialog
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -44,6 +47,7 @@ import javax.crypto.SecretKey
 class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdapterListener {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager: LayoutManager
     private lateinit var directoryAdapter: DirectoryAdapter
     private val cryptoHelper: CryptographyHelper = CryptographyHelper()
 
@@ -60,7 +64,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
     private lateinit var cancelSelectionFab: FloatingActionButton
     private lateinit var trashSelectionFab: FloatingActionButton
     private lateinit var changeSelectionTagFab: FloatingActionButton
-
+    private lateinit var moveSelectionFab: FloatingActionButton
 
     var userSpecifiedDirectory: File? = null
     private lateinit var currentDirectory: File
@@ -70,14 +74,20 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
     val pickMultipleMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
-                Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
 
                 // TODO()
                 // Implement option to lock files.
-
-                // Android's Security checks don't like when URIs are selected in this scope and then
-                // passed to the loading screen scope, so I might just call
                 uris.forEach { uri ->
+                    val mimeType = contentResolver.getType(uri)
+                    Log.d("PhotoPicker", mimeType.toString())
+
+                    val isVideo = mimeType?.startsWith("video") == true
+                    val itemType: ItemType = if (isVideo) {
+                        ItemType.VIDEO
+                    } else {
+                        ItemType.IMAGE
+                    }
+
                     var imageBytes: ByteArray? = null
                     val inputStream: InputStream? = baseContext.contentResolver.openInputStream(uri)
                     inputStream?.use { stream ->
@@ -100,12 +110,13 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                         uri = uri
                     ))
 
+                    val combinedBytes = itemType.typeBytes + imageBytes!!
                     FileOutputStream(tempFile).use { outputStream ->
-                        outputStream.write(imageBytes)
+                        outputStream.write(combinedBytes)
                     }
                 }
 
-                showLoadingScreen(ItemType.IMAGE)
+                showLoadingScreen()
 
             } else {
                 Log.d("PhotoPicker", "No media selected")
@@ -149,7 +160,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 }
             }
 
-            showLoadingScreen(ItemType.DOCUMENT)
+            showLoadingScreen()
 
         } else {
             Log.d("PhotoPicker", "No media selected")
@@ -163,9 +174,13 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             }
         }
 
+    // TODO
+    // In order to improve load times, gonna make all decoding happen
+    // in cache. ? I dont know if passing the image bytes in to the DirectoryItem
+    // data class is the move and it might actually be hindering load times.
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContentView(R.layout.activity_file_directory)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -209,12 +224,56 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         cancelSelectionFab = findViewById(R.id.selection_cancel)
         trashSelectionFab = findViewById(R.id.selection_trash)
         changeSelectionTagFab = findViewById(R.id.selection_change_tag)
+        moveSelectionFab = findViewById(R.id.selection_move)
 
         recyclerView = findViewById(R.id.directory_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        directoryAdapter = DirectoryAdapter(dataList, currentDirectory)
+        val layoutSwitch: MaterialSwitch = findViewById(R.id.layout_switch)
+
+        if (Config.load(cacheDir).has("LAYOUT")) {
+            layoutManager = when (Config.load(cacheDir).getString("LAYOUT")) {
+                "LINEAR" -> {
+                    directoryAdapter = DirectoryAdapter(dataList, currentDirectory, false)
+                    LinearLayoutManager(this)
+                }
+                "GRID" -> {
+                    layoutSwitch.isChecked = true
+                    val columns = if (Config.load(cacheDir).has("DIR_COLUMN_COUNT")) {
+                        Config.load(cacheDir).getInt("DIR_COLUMN_COUNT")
+                    } else {
+                        Config.update(cacheDir, "DIR_COLUMN_COUNT", "3")
+                        3
+                    }
+                    directoryAdapter = DirectoryAdapter(dataList, currentDirectory, true)
+                    GridLayoutManager(this, columns)
+                }
+                else -> {
+                    Config.update(cacheDir, "LAYOUT", "LINEAR")
+                    directoryAdapter = DirectoryAdapter(dataList, currentDirectory, false)
+                    LinearLayoutManager(this)
+                }
+            }
+        } else {
+            layoutManager = LinearLayoutManager(this)
+            directoryAdapter = DirectoryAdapter(dataList, currentDirectory, false)
+            Config.update(cacheDir, "LAYOUT", "LINEAR")
+        }
+
+        recyclerView.layoutManager = layoutManager
+
         recyclerView.adapter = directoryAdapter
+
+        layoutSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                recyclerView.layoutManager = GridLayoutManager(this, 3)
+                directoryAdapter.updateLayout(true)
+                Config.update(cacheDir, "LAYOUT", "GRID")
+            } else {
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                directoryAdapter.updateLayout(false)
+                Config.update(cacheDir, "LAYOUT", "LINEAR")
+            }
+        }
 
         val scrollIndicator = findViewById<ImageView>(R.id.scroll_indicator)
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -310,7 +369,11 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 for (item in deleteList) {
                     val position = directoryAdapter.getItemList().indexOf(item)
                     if (position != -1) {
-                        File(item.path).delete()
+                        if (File(item.path).isFile) {
+                            File(item.path).delete()
+                        } else {
+                            File(item.path).deleteRecursively()
+                        }
                         UtilityHelper.removeTag(File(cacheDir, "tags.json"), File(item.path))
                         directoryAdapter.getItemList().removeAt(position) // Remove from the adapter's list
                         directoryAdapter.notifyItemRemoved(position)
@@ -361,7 +424,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         // endregion
 
-        loadDirectoryContents(userSpecifiedDirectory)
+        if (LAST_ITEM_COUNT != currentDirectory.listFiles().count()) {
+            loadDirectoryContents(userSpecifiedDirectory)
+        }
     }
 
     fun showUploadButtons() {
@@ -385,25 +450,27 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         if (currentDirectory != File(filesDir, "Files")) {
             backDirectoryFab.show()
         }
-        filterFab.show()
+//        filterFab.show()
     }
 
     fun hideMainButtons() {
         mainFab.hide()
         backDirectoryFab.hide()
-        filterFab.hide()
+//        filterFab.hide()
     }
 
     fun showSelectionButtons() {
         cancelSelectionFab.show()
         trashSelectionFab.show()
         changeSelectionTagFab.show()
+        moveSelectionFab.show()
     }
 
     fun hideSelectionButtons() {
         cancelSelectionFab.hide()
         trashSelectionFab.hide()
         changeSelectionTagFab.hide()
+        moveSelectionFab.hide()
     }
 
     override fun onEnableSelectionMode() {
@@ -426,7 +493,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     override fun onPause() {
         super.onPause()
-        Log.d("123456", "PAUSED")
         directoryAdapter.disableSelectionMode()
         hideUploadButtons()
         hideSelectionButtons()
@@ -435,9 +501,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     override fun onResume() {
         super.onResume()
-        Log.d("123456", "RESUMED")
-        Log.d("123456", currentDirectory.toString())
-        loadDirectoryContents(currentDirectory)
+        if (LAST_ITEM_COUNT != currentDirectory.listFiles().count()) {
+            loadDirectoryContents(currentDirectory)
+        }
     }
 
     override fun loadDirectoryContents(selectedDirectory: File?) {
@@ -447,11 +513,16 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         currentDirectory = fileDirectory
 
         dataList.clear()
+        directoryAdapter.notifyDataSetChanged()
+
+        LAST_ITEM_COUNT = directoryList.count()
 
         for (item in directoryList) {
-
             var metadata: Pair<ItemType, Boolean>? = null
-            val type: ItemType = if (item.isDirectory) {
+            val cachedItemType = Cache.getFileTypeFromMemory(item.path)
+            val itemType = if (cachedItemType != null) {
+                ItemType.fromName(cachedItemType) ?: ItemType.UNKNOWN
+            } else if (item.isDirectory) {
                 ItemType.DIRECTORY
             } else {
                 val secretKey: SecretKey = cryptoHelper.getSecretKeyFromKeystore(item.name)
@@ -465,11 +536,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             val directoryItem = DirectoryItem(
                 name = item.name,
                 path = item.path,
-                type = type,
+                type = itemType,
                 locked = locked
             )
 
             dataList.add(directoryItem)
+            directoryAdapter.notifyItemInserted(dataList.size - 1)
         }
 
         val noItemsView: RelativeLayout = findViewById(R.id.no_items_view)
@@ -480,17 +552,18 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         } else {
             noItemsView.visibility = View.GONE
         }
-
-        directoryAdapter.notifyDataSetChanged()
     }
 
-    fun showLoadingScreen(itemType: ItemType) {
+    fun showLoadingScreen() {
         val intent = Intent(this, LoadingScreen::class.java)
         intent.putExtra("SPECIFIED_DIR", currentDirectory.toString())
-        intent.putExtra("ITEM_TYPE", itemType.name)
         intent.putExtra("LOAD_TYPE", "ENCODE")
 
         startActivity(intent)
         finish()
+    }
+
+    companion object {
+        var LAST_ITEM_COUNT = 0
     }
 }

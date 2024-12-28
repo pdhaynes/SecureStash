@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -13,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.securestash.Helpers.Cache
 import com.example.securestash.Helpers.CredentialManager
+import com.example.securestash.Helpers.UtilityHelper
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
@@ -237,6 +240,8 @@ class MainActivity : AppCompatActivity() {
                     editor.putString("user_pin_enc", CredentialManager().encryptData(initialPass))
                     editor.apply()
 
+                    Log.d("Credentials", CredentialManager().encryptData(initialPass))
+
                     val intent = Intent(this, FileDirectory::class.java)
                     startActivity(intent)
 
@@ -252,22 +257,36 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
         val storedUserPin = sharedPreferences.getString("user_pin_enc", null)
 
-        val fileDirectory: File = File(filesDir, "Files")
+        val fileDirectory = File(filesDir, "Files")
         if (!fileDirectory.exists()) {
             fileDirectory.mkdir()
         }
 
-        val statsFile: File = File(cacheDir, "stats.json")
+        val configFile = File(cacheDir, "config.json")
+        if (!configFile.exists()) {
+            configFile.createNewFile()
+        }
+
+        val tagFile = File(cacheDir, "tags.json")
+        if (!tagFile.exists()) {
+            tagFile.createNewFile()
+        }
+
+        val statsFile = File(cacheDir, "stats.json")
         if (!statsFile.exists()) {
             statsFile.createNewFile()
         }
 
-        val tempDirectory: File = File(filesDir, "Temp")
+        val tempDirectory = File(filesDir, "Temp")
         if (tempDirectory.exists()) {
             for (file in tempDirectory.listFiles()) {
                 file.delete()
             }
         }
+        val cacheList = UtilityHelper.recursivelyGrabFileList(File(filesDir, "Files")).filter {
+            it.isFile
+        }
+        Cache.buildCache(cacheList)
 
         if (storedUserPin.isNullOrEmpty()) {
             userSignUp()

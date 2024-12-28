@@ -68,11 +68,12 @@ class LoadingScreen : AppCompatActivity() {
                 // Do nothing!
             } else {
                 for (file in tempDirectory) {
-                    if (file.delete()) {
-                        Log.d("TempDirCleanup", "Deleted" + file.name + " from temp.")
-                    } else {
-                        Log.w("TempDirCleanup", "Failed to delete " + file.name + "from temp.")
-                    }
+                    file.delete()
+//                    if (file.delete()) {
+//                        Log.d("TempDirCleanup", "Deleted" + file.name + " from temp.")
+//                    } else {
+//                        Log.w("TempDirCleanup", "Failed to delete " + file.name + "from temp.")
+//                    }
                 }
             }
 
@@ -112,8 +113,6 @@ class LoadingScreen : AppCompatActivity() {
     }
 
     fun loadEncodingScreen(extras: Bundle) {
-        val fileType: ItemType
-
         val fileParentDirectory = extras.getString("SPECIFIED_DIR", "null")
         if (!fileParentDirectory.equals("null")) {
             specifiedDirectory = File(fileParentDirectory)
@@ -121,23 +120,23 @@ class LoadingScreen : AppCompatActivity() {
             specifiedDirectory = File(filesDir, "Files")
         }
 
-        val itemTypeName = extras.getString("ITEM_TYPE", "null")
-        val itemType = ItemType.fromName(itemTypeName)
-        if (itemType != null) {
-            fileType = ItemType.fromName(itemTypeName)!!
-        } else {
-            fileType = ItemType.DOCUMENT
-        }
-
         val targetDirectory = File(filesDir, "Temp").listFiles()
 
         loadingBar.max = targetDirectory!!.count()
 
         for (file in targetDirectory) {
+            Log.d("ENCODINGSCREEN", file.toString())
+            val fileBytes = file.readBytes()
+            val typeBytes = fileBytes.sliceArray(0..2)
+            val contentBytes = fileBytes.sliceArray(3 until fileBytes.size)
+            file.writeBytes(contentBytes)
+
+            Log.d("ENCODINGSCREEN", ItemType.fromByteArray(typeBytes).toString())
+
             UtilityHelper.queueFileEncodingTask(
                 uri = Uri.fromFile(file),
                 context = this,
-                fileType = fileType,
+                fileType = ItemType.fromByteArray(typeBytes),
                 isLocked = false,
                 targetDirectory = specifiedDirectory,
                 loadingScreen = this,

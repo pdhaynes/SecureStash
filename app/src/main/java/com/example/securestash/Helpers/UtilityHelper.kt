@@ -117,8 +117,9 @@ object UtilityHelper {
                             loadingScreen.addProgressToLoadingIndicator(1)
                         }
                         if (tempFilePath != null) {
-                            Log.d("DELETION", "Deleting file " + tempFilePath)
-                            Log.d("DELETION", File(tempFilePath).delete().toString())
+                            File(tempFilePath).delete()
+//                            Log.d("DELETION", "Deleting file " + tempFilePath)
+//                            Log.d("DELETION", File(tempFilePath).delete().toString())
                         }
                     } else if (workInfo.state == WorkInfo.State.FAILED) {
                         loadingScreen.addProgressToLoadingIndicator(1)

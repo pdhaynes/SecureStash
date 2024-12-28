@@ -43,6 +43,12 @@
         android:id="@+id/header"
         >
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/layout_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="52dp"
@@ -66,6 +72,9 @@
             android:gravity="center"
             app:cornerRadius="8dp"
             app:elevation="4dp"
+
+            android:contentDescription="Settings"
+            android:tooltipText="Settings"
 
             android:id="@+id/settings"
 
@@ -101,6 +110,9 @@
         android:src="@drawable/ic_arrow_down_24"
         android:layout_marginBottom="8dp"
 
+        android:tooltipText="Go to bottom of list."
+        android:contentDescription="Scroll Indicator"
+
         app:tint="@color/spacecadet"
         app:layout_constraintBottom_toBottomOf="@id/directory_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -125,12 +137,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="@color/brandeisblue"
+
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/directory_back_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+        android:tooltipText="Go Back"
+        android:contentDescription="Go Back"
 
         android:src="@drawable/ic_back_24"
 
@@ -150,6 +166,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Filter Files"
+        android:contentDescription="Filter Files"
+
         android:src="@drawable/ic_filter_24"
 
         app:layout_constraintStart_toEndOf="@+id/main_fab"
@@ -160,7 +179,7 @@
 
         app:tint="@color/white"
         app:backgroundTint="@color/spacecadet"
-
+        android:visibility="gone"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -168,7 +187,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:src="@drawable/ic_back_24"
+        android:tooltipText="Exit Upload Mode"
+        android:contentDescription="Exit Upload Mode"
+
+        android:src="@drawable/ic_close_24"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/upload_file_fab"
@@ -189,6 +211,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Upload Documents"
+
         android:src="@drawable/ic_document_24"
 
         app:layout_constraintStart_toEndOf="@+id/back_fab"
@@ -207,6 +231,8 @@
         android:id="@+id/upload_image_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+        android:tooltipText="Upload Photos"
 
         android:src="@drawable/ic_photo_24"
 
@@ -228,6 +254,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Take and Upload Photo"
+
         android:src="@drawable/ic_camera_24"
 
         app:layout_constraintStart_toEndOf="@+id/upload_image_fab"
@@ -247,6 +275,9 @@
         android:id="@+id/create_folder_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+        android:tooltipText="Create Folder"
+        android:contentDescription="Create Folder"
 
         android:src="@drawable/ic_add_folder_24"
 
@@ -268,6 +299,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Exit Selection Mode"
+        android:contentDescription="Exit Selection Mode"
+
         android:src="@drawable/ic_close_24"
 
         app:layout_constraintStart_toStartOf="parent"
@@ -278,19 +312,23 @@
 
         app:tint="@color/brandeisblue"
         android:backgroundTint="@color/white"
-
         android:visibility="gone"
+
         />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/selection_trash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Trash Selections"
+        android:contentDescription="Trash Selections"
+
         android:src="@drawable/ic_trash_24"
 
         app:layout_constraintStart_toEndOf="@+id/selection_cancel"
-        app:layout_constraintEnd_toStartOf="@+id/selection_change_tag"
+        app:layout_constraintEnd_toStartOf="@+id/selection_move"
         app:layout_constraintBottom_toBottomOf="parent"
 
         android:layout_marginBottom="24dp"
@@ -303,13 +341,38 @@
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/selection_move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:tooltipText="Move Selections"
+        android:contentDescription="Move Selections"
+
+        android:src="@drawable/ic_arrow_up_right_24"
+
+        app:layout_constraintStart_toEndOf="@+id/selection_trash"
+        app:layout_constraintEnd_toStartOf="@+id/selection_change_tag"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="24dp"
+
+        app:tint="@color/brandeisblue"
+        android:backgroundTint="@color/white"
+        android:visibility="gone"
+
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/selection_change_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:tooltipText="Change Tags"
+        android:contentDescription="Change Tags"
+
         android:src="@drawable/ic_tag_24"
 
-        app:layout_constraintStart_toEndOf="@+id/selection_trash"
+        app:layout_constraintStart_toEndOf="@+id/selection_move"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
 
