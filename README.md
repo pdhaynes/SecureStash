@@ -10,3 +10,7 @@ With SecureStash, you own your data. All files are stored locally on your device
 
 ### Effortless to Use
 No need for complicated setups or confusing interfaces. SecureStash provides a simple, intuitive design — just upload your files, and let the app handle the rest. Protecting your information has never been easier.
+
+## Version Deployment Checklist
+- The changes made do not break prior versions of the app
+- All features, even if seemingly unrelated to the changes made, have been verified to work as expected.
