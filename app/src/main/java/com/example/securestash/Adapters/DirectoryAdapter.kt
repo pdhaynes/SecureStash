@@ -1,11 +1,11 @@
 package com.example.securestash.Adapters
 
-import android.content.ClipData.Item
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,12 +74,12 @@ class DirectoryAdapter(
 
     fun enableSelectionMode() {
         isSelectionMode = true
-        notifyDataSetChanged() // Refresh the list
+        notifyDataSetChanged()
     }
 
     fun disableSelectionMode() {
         isSelectionMode = false
-        notifyDataSetChanged() // Refresh the list
+        notifyDataSetChanged()
     }
 
     inner class DirectoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -95,12 +95,10 @@ class DirectoryAdapter(
 
             itemTag.text = ""
             itemTag.visibility = View.GONE
-
-            checkbox.isChecked = false
-
             itemName.text = item.name
+
             val itemPath = item.path
-            val tagFile: File = File(itemView.context.cacheDir, "tags.json")
+            val tagFile = File(itemView.context.cacheDir, "tags.json")
             val tagList = if (tagFile.exists()) {
                 val content = tagFile.readText()
                 if (content.isNotBlank()) JSONObject(content) else JSONObject()
@@ -202,7 +200,7 @@ class DirectoryAdapter(
                 selectedItems.clear()
             }
 
-            checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            checkbox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked && !selectedItems.contains(item)) {
                     selectedItems.add(item)
                 } else if (selectedItems.contains(item) && !isChecked) {
@@ -234,11 +232,17 @@ class DirectoryAdapter(
                 if (!isSelectionMode) {
                     (itemView.context as? DirectoryAdapterListener)?.onEnableSelectionMode()
                 }
+
+                if (!checkbox.isChecked) {
+//                    if (!selectedItems.contains(item)) selectedItems.add(item)
+                    checkbox.isChecked = true
+                }
+                notifyItemChanged(absoluteAdapterPosition)
+
                 true
             }
         }
     }
-
 
     companion object {
         private const val VIEW_TYPE_GRID = 1
