@@ -316,7 +316,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         addFolderFab.setOnClickListener {
             val customDialog = DialogCreateFolder(
                 this,
-                directoryAdapter,
                 currentDirectory = currentDirectory,
                 loadDirContents = {
                 loadDirectoryContents(currentDirectory)
