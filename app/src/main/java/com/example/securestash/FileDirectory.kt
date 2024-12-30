@@ -442,10 +442,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         // endregion
-
-        if (LAST_ITEM_COUNT != (currentDirectory.listFiles()?.count() ?: -1)) {
-            loadDirectoryContents(userSpecifiedDirectory)
-        }
+        loadDirectoryContents(userSpecifiedDirectory)
     }
 
     private fun showUploadButtons() {
