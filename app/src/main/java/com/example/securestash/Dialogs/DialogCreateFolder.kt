@@ -22,7 +22,6 @@ import java.io.File
 
 class DialogCreateFolder(
     context: Context,
-    directoryAdapter: DirectoryAdapter,
     private val loadDirContents: () -> Unit,
     private val currentDirectory: File
 ) : Dialog(context), View.OnClickListener {
@@ -32,7 +31,6 @@ class DialogCreateFolder(
     private var newTag: String = ""
     private var userInputFolderName: String = ""
 
-    private var dirAdapter = directoryAdapter
     private var selectedColor = Color.BLUE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,7 +122,7 @@ class DialogCreateFolder(
                 newDir.mkdir()
 
                 if (tagName.isNotEmpty()) {
-                    val tagFile: File = File(context.cacheDir, "tags.json")
+                    val tagFile = File(context.cacheDir, "tags.json")
                     UtilityHelper.addOrUpdateTagForDirectory(tagFile, newDir, selectedColor, tagName)
                 }
 
