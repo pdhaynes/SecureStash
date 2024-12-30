@@ -66,13 +66,9 @@ class DialogChangeTag(
             }
         }
 
-        // TODO
-        // Check to see if a file path has a tag already, and set all of these items to that tag's
-        // information.
         val colorSquare: View = findViewById(R.id.color_square)
-        colorSquare.setBackgroundColor(selectedColor) // Blue by default.
+        colorSquare.setBackgroundColor(selectedColor)
         colorSquare.setOnClickListener {
-            // Color Picker
             Toast.makeText(context, "Clicked color square", Toast.LENGTH_SHORT).show()
             val colorDialog = AmbilWarnaDialog(context, selectedColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {
                 override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
