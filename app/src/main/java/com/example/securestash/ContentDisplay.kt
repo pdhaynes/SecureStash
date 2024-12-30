@@ -55,7 +55,7 @@ class ContentDisplay : AppCompatActivity() {
             throw Exception("Intent extras not provided.")
         }
 
-        val file: File = File(itemPath)
+        val file = File(itemPath)
         val secretKey = cryptoHelper.getSecretKeyFromKeystore(file.name)
         val decryptedFileBytes = cryptoHelper.decodeFile(file, secretKey).first
 
@@ -66,6 +66,10 @@ class ContentDisplay : AppCompatActivity() {
 
         val closeButton: MaterialButton = findViewById(R.id.buttonClose)
         closeButton.setOnClickListener {
+            val pdfFile = File(baseContext.cacheDir, "pdf_temp.pdf")
+            if (pdfFile.exists()) {
+                pdfFile.delete()
+            }
             finish()
         }
 
@@ -131,12 +135,8 @@ class ContentDisplay : AppCompatActivity() {
 
                 val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decryptedFileBytes))
                 showImage.setImage(ImageSource.bitmap(bitmap))
-//                val source = ImageSource.uri(itemPath)
-//                showImage.setImage(source)
             }
         }
-
-        Log.d("EXTRAS", "Type: ${itemType}, Path: ${itemPath}")
     }
 
     private fun updatePageCounter() {
