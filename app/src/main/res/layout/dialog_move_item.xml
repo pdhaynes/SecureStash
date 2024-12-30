@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_background"
+    android:backgroundTint="@color/isabelline">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tag_change_title"
+
+        android:text="Move Items To"
+
+        android:fontFamily="@font/titillum_family"
+        android:textColor="@color/white"
+        android:background="@color/brandeisblue"
+        android:textSize="20sp"
+        android:padding="8dp"
+        />
+
+    <Spinner
+        android:id="@+id/dropdown_select"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+
+        android:layout_margin="4dp"
+        android:background="@drawable/rounded_background"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/dialog_actions_layout"
+
+        android:layout_margin="4dp"
+        >
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+
+            android:layout_weight="1"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/scarlet"
+
+            android:id="@+id/cancel_button"
+            android:layout_marginHorizontal="4dp"
+            android:fontFamily="@font/titillum_family"
+
+            android:text="Cancel"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+
+            android:layout_weight="1"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/dark_pastel_green"
+
+            android:id="@+id/accept_button"
+            android:layout_marginHorizontal="4dp"
+            android:fontFamily="@font/titillum_family"
+
+            android:text="Accept"/>
+    </LinearLayout>
+
+</LinearLayout>
