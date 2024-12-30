@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -197,6 +198,19 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         window.statusBarColor = this.getColor(R.color.brandeisblue)
         window.navigationBarColor = this.getColor(R.color.paledogwood)
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (directoryAdapter.isSelectionMode) {
+                    directoryAdapter.disableSelectionMode()
+                    hideSelectionButtons()
+                    showMainButtons()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
         val specifiedDir = intent.getStringExtra("SPECIFIED_DIR")
         userSpecifiedDirectory = if (specifiedDir != null) {
             currentDirectory = File(specifiedDir)
@@ -360,7 +374,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             contentLayout.orientation = LinearLayout.VERTICAL
 
             val textView = TextView(this)
-            textView.text = "Are you sure you want to delete these ${deleteList.count()} items?"
+            textView.text = getString(R.string.dialog_delete_items_confirmation, deleteList.count())
 
             val itemListTextView = TextView(this)
             itemListTextView.textSize = 10f
@@ -482,17 +496,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         hideUploadButtons()
         hideMainButtons()
         showSelectionButtons()
-    }
-
-    @Deprecated("Deprecated")
-    override fun onBackPressed() {
-        if (directoryAdapter.isSelectionMode) {
-            directoryAdapter.disableSelectionMode()
-            hideSelectionButtons()
-            showMainButtons()
-        } else {
-            super.onBackPressed()
-        }
     }
 
     override fun onPause() {

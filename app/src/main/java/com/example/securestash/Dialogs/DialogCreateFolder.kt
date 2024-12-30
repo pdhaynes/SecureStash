@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Adapters.TagAdapter
 import com.example.securestash.Helpers.UtilityHelper
 import com.example.securestash.R
@@ -44,18 +43,16 @@ class DialogCreateFolder(
         cancel.setOnClickListener(this)
 
         val titleTag: TextView = findViewById(R.id.tag_change_title)
-        titleTag.text = "Create Folder"
+        titleTag.text = context.getString(R.string.dialog_create_folder_title)
 
         val tagFile = File(context.cacheDir, "tags.json")
         val tagList = UtilityHelper.getMostRecentTags(tagFile)
 
         val previewTag: TextView = findViewById(R.id.preview_tag)
-//        previewTag.background.setTint(selectedColor)
-//        previewTag.setTextColor(UtilityHelper.getTextColorForBackground(selectedColor))
         val newTagInput: TextInputEditText = findViewById(R.id.user_tag_input)
-        newTagInput.doOnTextChanged { text, start, before, count ->
+        newTagInput.doOnTextChanged { text, _, _, _ ->
             if (text?.count()!! < 1) {
-                previewTag.text = "No tag"
+                previewTag.text = context.getString(R.string.dialog_base_tag_message)
                 previewTag.background.setTint(Color.WHITE)
                 previewTag.setTextColor(UtilityHelper.getTextColorForBackground(Color.WHITE))
                 newTag = ""
@@ -75,7 +72,7 @@ class DialogCreateFolder(
         }
 
         val colorSquare: View = findViewById(R.id.color_square)
-        colorSquare.setBackgroundColor(selectedColor) // Blue by default.
+        colorSquare.setBackgroundColor(selectedColor)
         colorSquare.setOnClickListener {
             Toast.makeText(context, "Clicked color square", Toast.LENGTH_SHORT).show()
             val colorDialog = AmbilWarnaDialog(context, selectedColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {

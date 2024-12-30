@@ -48,7 +48,7 @@ class DialogChangeTag(
         cancel.setOnClickListener(this)
 
         val titleTag: TextView = findViewById(R.id.tag_change_title)
-        titleTag.text = "Change tag for ${selectionList.count()} item(s)."
+        titleTag.text = context.getString(R.string.dialog_change_tag_title, selectionList.count())
 
         val tagFile = File(context.cacheDir, "tags.json")
         val tagList = UtilityHelper.getMostRecentTags(tagFile)
@@ -57,9 +57,9 @@ class DialogChangeTag(
         previewTag.background.setTint(selectedColor)
         previewTag.setTextColor(UtilityHelper.getTextColorForBackground(selectedColor))
         val newTagInput: TextInputEditText = findViewById(R.id.user_tag_input)
-        newTagInput.doOnTextChanged { text, start, before, count ->
+        newTagInput.doOnTextChanged { text, _, _, count ->
             if (count < 1) {
-                previewTag.text = "Preview"
+                previewTag.text = context.getString(R.string.tag_preview_title)
             } else {
                 previewTag.text = text
                 newTag = text.toString()

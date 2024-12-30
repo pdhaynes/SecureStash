@@ -138,7 +138,7 @@ class ContentDisplay : AppCompatActivity() {
     }
 
     private fun updatePageCounter() {
-        pages.text = "${currentPosition + 1}/${pagerAdapter?.count}"
+        pages.text = getString(R.string.pdf_page_counter, currentPosition + 1, pagerAdapter?.count)
     }
 
     private fun onPageSelected(position: Int) {
