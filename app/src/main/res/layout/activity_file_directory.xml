@@ -43,11 +43,11 @@
         android:id="@+id/header"
         >
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/layout_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+<!--        <com.google.android.material.materialswitch.MaterialSwitch-->
+<!--            android:id="@+id/layout_switch"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            />-->
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
@@ -113,7 +113,11 @@
         android:tooltipText="Go to bottom of list."
         android:contentDescription="Scroll Indicator"
 
-        app:tint="@color/spacecadet"
+        android:padding="4dp"
+
+        app:tint="@color/white"
+        android:backgroundTint="@color/brandeisblue"
+        android:background="@drawable/rounded_background"
         app:layout_constraintBottom_toBottomOf="@id/directory_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

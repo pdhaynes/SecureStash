@@ -53,7 +53,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     private lateinit var mainFab: ExtendedFloatingActionButton
     private lateinit var backFab: FloatingActionButton
-    private lateinit var filterFab: FloatingActionButton
 
     private lateinit var uploadFileFab: FloatingActionButton
     private lateinit var uploadImageFab: FloatingActionButton
@@ -133,6 +132,8 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             // Android's Security checks don't like when URIs are selected in this scope and then
             // passed to the loading screen scope, so I might just call
             uris.forEach { uri ->
+                val itemType = ItemType.DOCUMENT
+
                 var imageBytes: ByteArray? = null
                 val inputStream: InputStream? = baseContext.contentResolver.openInputStream(uri)
                 inputStream?.use { stream ->
@@ -155,8 +156,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                     uri = uri
                 ))
 
+                val combinedBytes = itemType.typeBytes + imageBytes!!
                 FileOutputStream(tempFile).use { outputStream ->
-                    outputStream.write(imageBytes)
+                    outputStream.write(combinedBytes)
                 }
             }
 
@@ -171,6 +173,10 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
 //                loadDirectoryContents(userSpecifiedDirectory)
+                Toast.makeText(this, "Successfully saved picture to directory.", Toast.LENGTH_LONG)
+            }
+            if (result.resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Canceled taking of picture.", Toast.LENGTH_LONG)
             }
         }
 
@@ -211,7 +217,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         // Main Buttons
         mainFab = findViewById(R.id.main_fab)
         backFab = findViewById(R.id.back_fab)
-        filterFab = findViewById(R.id.directory_filter_fab)
 
         // Upload Buttons
         uploadFileFab = findViewById(R.id.upload_file_fab)
@@ -228,7 +233,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         recyclerView = findViewById(R.id.directory_recycler_view)
 
-        val layoutSwitch: MaterialSwitch = findViewById(R.id.layout_switch)
 
         if (Config.load(cacheDir).has("LAYOUT")) {
             layoutManager = when (Config.load(cacheDir).getString("LAYOUT")) {
@@ -237,7 +241,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                     LinearLayoutManager(this)
                 }
                 "GRID" -> {
-                    layoutSwitch.isChecked = true
                     val columns = if (Config.load(cacheDir).has("DIR_COLUMN_COUNT")) {
                         Config.load(cacheDir).getInt("DIR_COLUMN_COUNT")
                     } else {
@@ -262,18 +265,6 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         recyclerView.layoutManager = layoutManager
 
         recyclerView.adapter = directoryAdapter
-
-        layoutSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                recyclerView.layoutManager = GridLayoutManager(this, 3)
-                directoryAdapter.updateLayout(true)
-                Config.update(cacheDir, "LAYOUT", "GRID")
-            } else {
-                recyclerView.layoutManager = LinearLayoutManager(this)
-                directoryAdapter.updateLayout(false)
-                Config.update(cacheDir, "LAYOUT", "LINEAR")
-            }
-        }
 
         val scrollIndicator = findViewById<ImageView>(R.id.scroll_indicator)
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -450,13 +441,11 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         if (currentDirectory != File(filesDir, "Files")) {
             backDirectoryFab.show()
         }
-//        filterFab.show()
     }
 
     fun hideMainButtons() {
         mainFab.hide()
         backDirectoryFab.hide()
-//        filterFab.hide()
     }
 
     fun showSelectionButtons() {
@@ -521,7 +510,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             var metadata: Pair<ItemType, Boolean>? = null
             val cachedItemType = Cache.getFileTypeFromMemory(item.path)
             val itemType = if (cachedItemType != null) {
-                ItemType.fromName(cachedItemType) ?: ItemType.UNKNOWN
+                ItemType.fromName(cachedItemType)
             } else if (item.isDirectory) {
                 ItemType.DIRECTORY
             } else {

@@ -152,7 +152,7 @@ class DirectoryAdapter(
                         val fileType = cryptoHelper.readMetadata(decodedBytes.second).first
                         Cache.saveFileTypeInMemory(itemPath, fileType.toString())
                         val itemType: ItemType = ItemType.fromName(fileType.toString())
-                        bitmap = if (itemType == ItemType.IMAGE || itemType == ItemType.DOCUMENT) {
+                        bitmap = if (itemType == ItemType.IMAGE) {
                             val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                             Bitmap.createScaledBitmap(decodedBitmap, 120, 120, true)
                         } else {

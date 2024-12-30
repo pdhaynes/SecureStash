@@ -18,22 +18,17 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import android.Manifest
-import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Helpers.UtilityHelper
-import com.example.securestash.Helpers.UtilityHelper.getFileNameFromUri
-import com.example.securestash.Helpers.UtilityHelper.renameDuplicateFile
 import com.example.securestash.Interfaces.DirectoryContentLoader
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStream
 
 class TakePicture : AppCompatActivity() {
     private val REQUEST_CAMERA_PERMISSION = 100
@@ -45,8 +40,6 @@ class TakePicture : AppCompatActivity() {
 
     private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var itemPath: String
-
-    private lateinit var contentLoader: DirectoryContentLoader
 
     private fun showPermissionExplanation() {
         AlertDialog.Builder(this)
@@ -123,6 +116,8 @@ class TakePicture : AppCompatActivity() {
             takePhoto(object : PhotoCaptureCallback {
                 override fun onPhotoCaptured(photoUri: String?) {
                     if (photoUri != null) {
+                        val itemType = ItemType.IMAGE
+
                         val uri = Uri.parse(photoUri)
                         var imageBytes: ByteArray? = null
                         val inputStream: InputStream? = baseContext.contentResolver.openInputStream(uri)
@@ -136,22 +131,25 @@ class TakePicture : AppCompatActivity() {
                             imageBytes = outputStream.toByteArray()
                         }
 
-                        val tempFileDirectory: File = File(filesDir, "Temp")
+                        val tempFileDirectory = File(filesDir, "Temp")
                         if (!tempFileDirectory.exists()) {
                             tempFileDirectory.mkdir()
                         }
 
-                        val tempFile: File = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
+                        val tempFile = File(tempFileDirectory, UtilityHelper.getFileNameFromUri(
                             contentResolver = baseContext.contentResolver,
                             uri = uri
                         ))
 
+                        val combinedBytes = itemType.typeBytes + imageBytes!!
                         FileOutputStream(tempFile).use { outputStream ->
-                            outputStream.write(imageBytes)
+                            outputStream.write(combinedBytes)
                         }
 
                         setResult(RESULT_OK)
                         val intent = Intent(this@TakePicture, LoadingScreen::class.java)
+                        intent.putExtra("SPECIFIED_DIR", itemPath)
+                        intent.putExtra("LOAD_TYPE", "ENCODE")
                         startActivity(intent)
                         finish()
                     }
