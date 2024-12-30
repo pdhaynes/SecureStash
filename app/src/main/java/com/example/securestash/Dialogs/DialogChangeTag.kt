@@ -111,7 +111,7 @@ class DialogChangeTag(
             R.id.accept_button -> {
                 val tagName = newTag
                 if (tagName.isNotEmpty()) {
-                    val tagFile: File = File(context.cacheDir, "tags.json")
+                    val tagFile = File(context.cacheDir, "tags.json")
                     for (item in selectionList) {
                         UtilityHelper.addOrUpdateTagForDirectory(tagFile, File(item.path), selectedColor, tagName)
                     }
