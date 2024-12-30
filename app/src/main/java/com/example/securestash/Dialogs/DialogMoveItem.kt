@@ -7,10 +7,8 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
-import com.bumptech.glide.util.Util
 import com.example.securestash.Adapters.CustomSpinnerAdapter
 import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Helpers.UtilityHelper
@@ -101,10 +99,8 @@ class DialogMoveItem(
                     val destinationFile = File(targetDirectory, file.name)
                     val targetFile = File(file.path)
                     if (targetFile.renameTo(destinationFile)) {
-                        Log.d("MoveFile", "Moved file to $destinationFile")
                         val tagFile = File(context.cacheDir, "tags.json")
                         val tag = UtilityHelper.getFileTag(tagFile, targetFile)
-                        Log.d("Tag", "${tag?.Name}, ${tag?.Color}")
                         if (tag != null) {
                             UtilityHelper.addOrUpdateTagForDirectory(
                                 tagFile,
@@ -118,12 +114,13 @@ class DialogMoveItem(
                             )
                         }
                         targetFile.delete()
+                        Log.d("MoveFile", "Moved file to $destinationFile")
+                        Toast.makeText(context, "Files moved successfully!", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(context, "Failed to move: ${file.name}", Toast.LENGTH_SHORT).show()
                     }
                 }
 
-                Toast.makeText(context, "Files moved successfully!", Toast.LENGTH_SHORT).show()
                 loadDirContents.invoke()
                 directoryAdapter.disableSelectionMode()
                 hideSelectionButtons.invoke()
