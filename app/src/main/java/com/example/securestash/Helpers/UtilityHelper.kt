@@ -174,6 +174,22 @@ object UtilityHelper {
         }
     }
 
+    fun getFileTag(tagFile: File, targetDirectoryPath: File): Tag? {
+        val tagList = if (tagFile.exists()) {
+            val content = tagFile.readText()
+            if (content.isNotBlank()) JSONObject(content) else JSONObject()
+        } else {
+            JSONObject()
+        }
+
+        if (tagList.has(targetDirectoryPath.toString())) {
+            val tag = tagList.getJSONObject(targetDirectoryPath.toString())
+            return Tag(tag.getString("tag"), tag.getInt("color"))
+        }
+
+        return null
+    }
+
     fun removeTag(tagFile: File, targetDirectoryPath: File) {
         val tagList = if (tagFile.exists()) {
             val content = tagFile.readText()

@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import com.bumptech.glide.util.Util
 import com.example.securestash.Adapters.CustomSpinnerAdapter
 import com.example.securestash.Adapters.DirectoryAdapter
 import com.example.securestash.Helpers.UtilityHelper
@@ -44,10 +45,6 @@ class DialogMoveItem(
             .filter { it.isDirectory && it.absolutePath != currentPath }
             .map { file -> file.absolutePath.removePrefix("$basePath/") }
             .toMutableList()
-
-        Log.d("ASDF", File(currentPath, "Files").toString())
-        Log.d("ASDF", context.filesDir.toString())
-        Log.d("ASDF", (currentPath != File(context.filesDir, "Files").toString()).toString())
 
         if (currentPath != File(context.filesDir, "Files").toString()) {
             directoryList.add(0, "Home Directory")
@@ -105,6 +102,21 @@ class DialogMoveItem(
                     val targetFile = File(file.path)
                     if (targetFile.renameTo(destinationFile)) {
                         Log.d("MoveFile", "Moved file to $destinationFile")
+                        val tagFile = File(context.cacheDir, "tags.json")
+                        val tag = UtilityHelper.getFileTag(tagFile, targetFile)
+                        Log.d("Tag", "${tag?.Name}, ${tag?.Color}")
+                        if (tag != null) {
+                            UtilityHelper.addOrUpdateTagForDirectory(
+                                tagFile,
+                                destinationFile,
+                                tag.Color,
+                                tag.Name
+                            )
+                            UtilityHelper.removeTag(
+                                tagFile,
+                                targetFile
+                            )
+                        }
                         targetFile.delete()
                     } else {
                         Toast.makeText(context, "Failed to move: ${file.name}", Toast.LENGTH_SHORT).show()
