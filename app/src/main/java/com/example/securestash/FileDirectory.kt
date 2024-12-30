@@ -171,8 +171,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
     private val takePictureForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-//                loadDirectoryContents(userSpecifiedDirectory)
-                Toast.makeText(this, "Successfully saved picture to directory.", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Successfully saved picture to directory.", Toast. LENGTH_LONG)
             }
             if (result.resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Canceled taking of picture.", Toast.LENGTH_LONG)
