@@ -28,6 +28,7 @@ import com.example.securestash.DataModels.DirectoryItem
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Dialogs.DialogChangeTag
 import com.example.securestash.Dialogs.DialogCreateFolder
+import com.example.securestash.Dialogs.DialogMoveItem
 import com.example.securestash.Helpers.Cache
 import com.example.securestash.Helpers.Config
 import com.example.securestash.Helpers.CryptographyHelper
@@ -328,6 +329,24 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             directoryAdapter.disableSelectionMode()
             hideSelectionButtons()
             showMainButtons()
+        }
+
+        moveSelectionFab.setOnClickListener {
+            val customDialog = DialogMoveItem(
+                this,
+                currentDirectory.toString(),
+                directoryAdapter,
+                loadDirContents = {
+                    loadDirectoryContents(currentDirectory)
+                },
+                hideSelectionButtons = {
+                    hideSelectionButtons()
+                },
+                showMainButtons = {
+                    showMainButtons()
+                })
+
+            customDialog.show()
         }
 
         trashSelectionFab.setOnClickListener {
