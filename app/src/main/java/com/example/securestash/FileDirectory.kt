@@ -1,6 +1,5 @@
 package com.example.securestash
 
-import android.content.ClipData.Item
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -37,8 +36,6 @@ import com.example.securestash.Interfaces.DirectoryContentLoader
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.materialswitch.MaterialSwitch
-import yuku.ambilwarna.AmbilWarnaDialog
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -66,12 +63,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
     private lateinit var changeSelectionTagFab: FloatingActionButton
     private lateinit var moveSelectionFab: FloatingActionButton
 
-    var userSpecifiedDirectory: File? = null
+    private var userSpecifiedDirectory: File? = null
     private lateinit var currentDirectory: File
 
-    var dataList = mutableListOf<DirectoryItem>()
+    private var dataList = mutableListOf<DirectoryItem>()
 
-    val pickMultipleMedia =
+    private val pickMultipleMedia =
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             if (uris.isNotEmpty()) {
 
@@ -123,7 +120,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             }
         }
 
-    val pickMultipleDocuments = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+    private val pickMultipleDocuments = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         if (uris.isNotEmpty()) {
             Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
 
@@ -183,7 +180,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     // TODO
     // In order to improve load times, gonna make all decoding happen
-    // in cache. ? I dont know if passing the image bytes in to the DirectoryItem
+    // in cache. ? I don't know if passing the image bytes in to the DirectoryItem
     // data class is the move and it might actually be hindering load times.
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -350,7 +347,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         trashSelectionFab.setOnClickListener {
             val deleteList = directoryAdapter.getSelectedItems()
-            if (deleteList.count() < 1) {
+            if (deleteList.isEmpty()) {
                 Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -374,7 +371,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             contentLayout.addView(itemListTextView)
             builder.setView(contentLayout)
 
-            builder.setPositiveButton("Delete") { dialog, _ ->
+            builder.setPositiveButton("Delete") { _, _ ->
                 for (item in deleteList) {
                     val position = directoryAdapter.getItemList().indexOf(item)
                     if (position != -1) {
@@ -403,7 +400,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         changeSelectionTagFab.setOnClickListener {
             val selectedList = directoryAdapter.getSelectedItems()
-            if (selectedList.count() < 1) {
+            if (selectedList.isEmpty()) {
                 Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -433,12 +430,12 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         // endregion
 
-        if (LAST_ITEM_COUNT != currentDirectory.listFiles().count()) {
+        if (LAST_ITEM_COUNT != (currentDirectory.listFiles()?.count() ?: -1)) {
             loadDirectoryContents(userSpecifiedDirectory)
         }
     }
 
-    fun showUploadButtons() {
+    private fun showUploadButtons() {
         backFab.show()
         uploadFileFab.show()
         uploadImageFab.show()
@@ -446,7 +443,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         addFolderFab.show()
     }
 
-    fun hideUploadButtons() {
+    private fun hideUploadButtons() {
         backFab.hide()
         uploadFileFab.hide()
         uploadImageFab.hide()
@@ -454,26 +451,26 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         addFolderFab.hide()
     }
 
-    fun showMainButtons() {
+    private fun showMainButtons() {
         mainFab.show()
         if (currentDirectory != File(filesDir, "Files")) {
             backDirectoryFab.show()
         }
     }
 
-    fun hideMainButtons() {
+    private fun hideMainButtons() {
         mainFab.hide()
         backDirectoryFab.hide()
     }
 
-    fun showSelectionButtons() {
+    private fun showSelectionButtons() {
         cancelSelectionFab.show()
         trashSelectionFab.show()
         changeSelectionTagFab.show()
         moveSelectionFab.show()
     }
 
-    fun hideSelectionButtons() {
+    private fun hideSelectionButtons() {
         cancelSelectionFab.hide()
         trashSelectionFab.hide()
         changeSelectionTagFab.hide()
@@ -508,7 +505,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     override fun onResume() {
         super.onResume()
-        if (LAST_ITEM_COUNT != currentDirectory.listFiles().count()) {
+        if (LAST_ITEM_COUNT != (currentDirectory.listFiles()?.count() ?: -1)) {
             loadDirectoryContents(currentDirectory)
         }
     }
@@ -561,7 +558,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
     }
 
-    fun showLoadingScreen() {
+    private fun showLoadingScreen() {
         val intent = Intent(this, LoadingScreen::class.java)
         intent.putExtra("SPECIFIED_DIR", currentDirectory.toString())
         intent.putExtra("LOAD_TYPE", "ENCODE")
