@@ -1,6 +1,9 @@
 package com.example.securestash
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -131,7 +134,24 @@ class ContentDisplay : AppCompatActivity() {
                     rotateImage(90)
                 }
 
-                val bitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decryptedFileBytes))
+                val inputStream = ByteArrayInputStream(decryptedFileBytes)
+                val exif = ExifInterface(inputStream)
+
+                val rotationDegrees = when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                    else -> 0
+                }
+
+                val originalBitmap = BitmapFactory.decodeStream(ByteArrayInputStream(decryptedFileBytes))
+                val bitmap = if (rotationDegrees != 0) {
+                    val matrix = Matrix()
+                    matrix.postRotate(rotationDegrees.toFloat())
+                    Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true)
+                } else {
+                    originalBitmap
+                }
                 showImage.setImage(ImageSource.bitmap(bitmap))
             }
         }
