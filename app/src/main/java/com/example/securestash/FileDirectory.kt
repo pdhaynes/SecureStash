@@ -2,6 +2,7 @@ package com.example.securestash
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -449,7 +450,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         backFab.show()
         uploadFileFab.show()
         uploadImageFab.show()
-        takePhotoFab.show()
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            takePhotoFab.show()
+        }
         addFolderFab.show()
     }
 
@@ -457,7 +460,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         backFab.hide()
         uploadFileFab.hide()
         uploadImageFab.hide()
-        takePhotoFab.hide()
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            takePhotoFab.show()
+        }
         addFolderFab.hide()
     }
 
