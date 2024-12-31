@@ -460,9 +460,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         backFab.hide()
         uploadFileFab.hide()
         uploadImageFab.hide()
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            takePhotoFab.show()
-        }
+        takePhotoFab.hide()
         addFolderFab.hide()
     }
 
