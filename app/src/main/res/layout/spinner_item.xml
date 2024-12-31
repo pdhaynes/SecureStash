@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/spinner_background"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:layout_height="52dp"
+    android:padding="8dp"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/spinner_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@id/spinner_arrow"
         android:textColor="@color/spacecadet"
         android:textSize="16sp"
-        android:gravity="center_vertical" />
+        android:layout_centerVertical="true" />
 
     <ImageView
         android:id="@+id/spinner_arrow"
