@@ -40,7 +40,13 @@ class DialogMoveItem(
         val basePath = File(context.filesDir, "Files").absolutePath
 
         val directoryList = UtilityHelper.recursivelyGrabFileList(File(context.filesDir, "Files"))
-            .filter { it.isDirectory && it.absolutePath != currentPath }
+            .filter {
+                it.isDirectory &&
+                it.absolutePath != currentPath &&
+                !directoryAdapter.getSelectedItems().map {
+                    file -> file.path
+                }.contains(it.absolutePath)
+            }
             .map { file -> file.absolutePath.removePrefix("$basePath/") }
             .toMutableList()
 
