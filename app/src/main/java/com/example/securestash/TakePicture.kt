@@ -24,7 +24,6 @@ import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Helpers.UtilityHelper
-import com.example.securestash.Interfaces.DirectoryContentLoader
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
