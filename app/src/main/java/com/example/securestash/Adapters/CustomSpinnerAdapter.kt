@@ -23,6 +23,11 @@ class CustomSpinnerAdapter(private val context: Context, private val items: Arra
         val textView = view.findViewById<TextView>(R.id.spinner_text)
         textView.text = items[position]
 
+        val arrowView = view.findViewById<ImageView>(R.id.spinner_arrow)
+        if (items.size == 1) {
+            arrowView.visibility = View.GONE
+        }
+
         return view
     }
 
