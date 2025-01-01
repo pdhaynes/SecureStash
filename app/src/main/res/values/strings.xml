@@ -48,4 +48,11 @@
     <string name="tag_preview_title">Preview</string>
     <string name="pdf_page_counter">%d/%d</string>
     <string name="dialog_delete_items_confirmation">Are you sure you want to delete these %d items?</string>
+    <string name="hint_new_pin">New Pin</string>
+    <string name="change_pin_title">Change PIN</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="accept_button">Accept</string>
+    <string name="incorrect_pin">PIN does not match PIN on record.</string>
+    <string name="err_improper_pin_size">PIN must be 6 digits.</string>
+    <string name="err_pins_dont_match">PINs do not match.</string>
 </resources>
