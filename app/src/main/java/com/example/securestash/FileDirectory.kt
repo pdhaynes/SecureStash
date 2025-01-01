@@ -320,8 +320,8 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         takePhotoFab.setOnClickListener {
             val intent = Intent(this, TakePicture::class.java)
             intent.putExtra("ITEM_PATH", currentDirectory.toString())
-            Log.d("TakePictureItemPath", currentDirectory.toString())
             takePictureForResult.launch(intent)
+            finish()
         }
 
         addFolderFab.setOnClickListener {

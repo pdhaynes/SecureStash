@@ -159,6 +159,9 @@ class TakePicture : AppCompatActivity() {
 
         binding.buttonBack.setOnClickListener {
             setResult(RESULT_CANCELED)
+            val intent = Intent(this, FileDirectory::class.java)
+            intent.putExtra("SPECIFIED_DIR", itemPath)
+            startActivity(intent)
             finish()
         }
 
