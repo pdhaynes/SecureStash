@@ -35,9 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.statusBarColor = this.resources.getColor(R.color.isabelline)
-        window.navigationBarColor = this.resources.getColor(R.color.paledogwood)
+        window.statusBarColor = this.getColor(R.color.isabelline)
+        window.navigationBarColor = this.getColor(R.color.paledogwood)
 
         // region UI Variable Assignments
 
@@ -147,7 +146,7 @@ class MainActivity : AppCompatActivity() {
 
                     loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
                 } else if (storedPin != inputPin){
-                    loginPinStatus.text = "PIN does not match PIN on record."
+                    loginPinStatus.text = getString(R.string.incorrect_pin)
                     loginPinStatus.visibility = View.VISIBLE
 
                     loginPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
@@ -175,7 +174,7 @@ class MainActivity : AppCompatActivity() {
 
                     val inputText = charSequence.toString()
                     if (inputText.length < 6) {
-                        signupPinStatus.text = "PIN must be 6 digits."
+                        signupPinStatus.text = getString(R.string.err_improper_pin_size)
                         signupPinStatus.visibility = View.VISIBLE
 
                         signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.scarlet))
@@ -198,7 +197,7 @@ class MainActivity : AppCompatActivity() {
 
                     val inputText = charSequence.toString()
                     if (inputText != initialPass) {
-                        signupConfirmPinStatus.text = "PINs do not match."
+                        signupConfirmPinStatus.text = getString(R.string.err_pins_dont_match)
                         signupConfirmPinStatus.visibility = View.VISIBLE
 
                         signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@MainActivity, R.color.scarlet))
@@ -270,8 +269,11 @@ class MainActivity : AppCompatActivity() {
 
         val tempDirectory = File(filesDir, "Temp")
         if (tempDirectory.exists()) {
-            for (file in tempDirectory.listFiles()) {
-                file.delete()
+            val fileList = tempDirectory.listFiles()
+            if (fileList !=null) {
+                for (file in fileList) {
+                    file.delete()
+                }
             }
         }
 
