@@ -12,7 +12,6 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.securestash.databinding.ActivityTakePictureBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -24,6 +23,7 @@ import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Helpers.UtilityHelper
+import com.example.securestash.databinding.ActivityTakePictureBinding
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
