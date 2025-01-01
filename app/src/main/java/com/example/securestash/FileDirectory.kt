@@ -342,6 +342,30 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         moveSelectionFab.setOnClickListener {
+            val noRecursionCheck = UtilityHelper.recursivelyGrabFileList(File(baseContext.filesDir, "Files"))
+                .filter {
+                    it.isDirectory &&
+                    it.absolutePath != currentDirectory.toString() &&
+                    !directoryAdapter.getSelectedItems().map {
+                            file -> file.path
+                    }.contains(it.absolutePath)
+                }
+
+            val noFolderCheck = UtilityHelper.recursivelyGrabFileList(File(baseContext.filesDir, "Files"))
+                .filter {
+                    it.isDirectory
+                }
+
+            if (noFolderCheck.isEmpty()) {
+                Toast.makeText(baseContext, "There are no folders to move items into.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (noRecursionCheck.isEmpty()) {
+                Toast.makeText(baseContext, "You cannot move a folder into itself, make a new folder first.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val customDialog = DialogMoveItem(
                 this,
                 currentDirectory.toString(),
@@ -444,6 +468,16 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
         // endregion
         loadDirectoryContents(userSpecifiedDirectory)
+
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val itemCount = recyclerView.adapter?.itemCount ?: 0
+
+        if (lastVisibleItemPosition < itemCount - 1) {
+            scrollIndicator.visibility = View.VISIBLE
+        } else {
+            scrollIndicator.visibility = View.GONE
+        }
     }
 
     private fun showUploadButtons() {
@@ -499,6 +533,14 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
 
     override fun onPause() {
         super.onPause()
+        directoryAdapter.disableSelectionMode()
+        hideUploadButtons()
+        hideSelectionButtons()
+        showMainButtons()
+    }
+
+    override fun onStop() {
+        super.onStop()
         directoryAdapter.disableSelectionMode()
         hideUploadButtons()
         hideSelectionButtons()
