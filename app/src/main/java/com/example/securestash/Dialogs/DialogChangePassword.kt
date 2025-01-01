@@ -2,17 +2,14 @@ package com.example.securestash.Dialogs
 
 import android.app.Dialog
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
-import androidx.core.content.ContextCompat
 import com.example.securestash.Helpers.CredentialManager
 import com.example.securestash.R
 import com.google.android.material.button.MaterialButton
@@ -54,14 +51,7 @@ class DialogChangePassword(context: Context) : Dialog(context), View.OnClickList
                 newPinStatus.visibility = View.GONE
 
                 val inputText = charSequence.toString()
-                if (inputText == CredentialManager().decryptData(savedUserPin)) {
-                    errorsExist = true
-                    errorMessage = "New PIN cannot be same as old PIN."
-                    pinInputEditText.background.setTint(context.getColor(R.color.rust))
-
-                    newPinStatus.text = errorMessage
-                    newPinStatus.visibility = View.VISIBLE
-                } else if (charSequence!!.count() < 6) {
+                if (charSequence!!.count() < 6) {
                     errorsExist = true
                     errorMessage = "PIN must be 6 digits."
                     pinInputEditText.background.setTint(context.getColor(R.color.rust))
@@ -94,7 +84,7 @@ class DialogChangePassword(context: Context) : Dialog(context), View.OnClickList
                 editor.putString("user_pin_enc", CredentialManager().encryptData(newPin))
                 editor.apply()
 
-                Toast.makeText(context, "PIN changed", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "PIN successfully changed", Toast.LENGTH_LONG).show()
                 dismiss()
             }
             R.id.cancel_button -> dismiss()
