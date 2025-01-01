@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -26,8 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Might interfere with keyboard displacement
-//        enableEdgeToEdge()
+
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -165,8 +163,8 @@ class MainActivity : AppCompatActivity() {
         fun userSignUp() {
             shouldHideLoginItems(true)
 
-            var initialPass: String = ""
-            var confirmPass: String = ""
+            var initialPass = ""
+            var confirmPass = ""
 
             signupPinField.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
@@ -232,15 +230,10 @@ class MainActivity : AppCompatActivity() {
                     signupConfirmPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
 
                 } else {
-                    // TODO
-                    // Put password into Cipher DB
-
                     val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.putString("user_pin_enc", CredentialManager().encryptData(initialPass))
                     editor.apply()
-
-                    Log.d("Credentials", CredentialManager().encryptData(initialPass))
 
                     val intent = Intent(this, FileDirectory::class.java)
                     startActivity(intent)
@@ -252,8 +245,6 @@ class MainActivity : AppCompatActivity() {
 
         // endregion
 
-        // TODO
-        // This is not a secure way to store user pins
         val sharedPreferences = getSharedPreferences("secure_stash", MODE_PRIVATE)
         val storedUserPin = sharedPreferences.getString("user_pin_enc", null)
 
@@ -283,6 +274,7 @@ class MainActivity : AppCompatActivity() {
                 file.delete()
             }
         }
+
         val cacheList = UtilityHelper.recursivelyGrabFileList(File(filesDir, "Files")).filter {
             it.isFile
         }
