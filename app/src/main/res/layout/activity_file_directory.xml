@@ -31,58 +31,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:gravity="center_vertical"
+        android:id="@+id/header"
         android:background="@color/brandeisblue"
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/directory_recycler_view"
+        app:layout_constraintBottom_toTopOf="@id/directory_recycler_view">
 
-        android:id="@+id/header"
-        >
-
-<!--        <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--            android:id="@+id/layout_switch"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            />-->
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:id="@+id/secure_stash_title"
-            android:layout_weight="1"
-            android:textSize="24sp"
-            android:text="SecureStash"
-            android:textColor="@color/white"
-            android:textAlignment="center"
+            android:background="@color/brandeisblue">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/secure_stash_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SecureStash"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:fontFamily="@font/titillium_regular"
+                android:layout_centerInParent="true"
+                android:padding="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/settings"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:backgroundTint="#0052CC"
+                android:gravity="center"
+                android:contentDescription="Settings"
+                android:tooltipText="Settings"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:icon="@drawable/ic_settings_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/white" />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:id="@+id/current_directory"
+            android:text="Home"
             android:fontFamily="@font/titillium_regular"
             android:padding="4dp"
-            />
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="2dp"
-            android:backgroundTint="#0052CC"
+            android:background="@color/azure"
+            android:textColor="@color/white"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:gravity="center"
-            app:cornerRadius="8dp"
-            app:elevation="4dp"
-
-            android:contentDescription="Settings"
-            android:tooltipText="Settings"
-
-            android:id="@+id/settings"
-
-            app:icon="@drawable/ic_settings_24"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconTint="@color/white" />
-
+            />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
