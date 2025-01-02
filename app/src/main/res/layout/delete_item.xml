@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxHeight="80dp"
+    android:id="@+id/directory_item"
+    android:background="@drawable/rounded_background"
+    android:padding="4dp"
+    android:orientation="vertical"
+    android:layout_marginVertical="2dp">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Item Name"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:padding="2dp"
+        />
+
+    <TextView
+        android:id="@+id/path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Item Path"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:padding="2dp"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Item Tag"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/black"
+
+        android:padding="4dp"
+
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="@color/black"
+
+        android:visibility="gone"
+        />
+
+</LinearLayout>
