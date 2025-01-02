@@ -8,14 +8,12 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,16 +22,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.securestash.Adapters.DirectoryAdapter
-import com.example.securestash.Adapters.DirectoryAdapterListener
 import com.example.securestash.DataModels.DirectoryItem
 import com.example.securestash.DataModels.ItemType
 import com.example.securestash.Dialogs.DialogChangeTag
 import com.example.securestash.Dialogs.DialogCreateFolder
+import com.example.securestash.Dialogs.DialogDeleteItem
 import com.example.securestash.Dialogs.DialogMoveItem
 import com.example.securestash.Helpers.Cache
 import com.example.securestash.Helpers.Config
 import com.example.securestash.Helpers.CryptographyHelper
 import com.example.securestash.Helpers.UtilityHelper
+import com.example.securestash.Interfaces.DirectoryAdapterListener
 import com.example.securestash.Interfaces.DirectoryContentLoader
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -401,50 +400,24 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 return@setOnClickListener
             }
 
-            val builder = AlertDialog.Builder(this)
+            val deleteDialog = DialogDeleteItem(
+                this,
+                directoryAdapter,
+                loadDirContents = {
+                    loadDirectoryContents(currentDirectory)
+                },
+                hideSelectionButtons = {
+                    hideSelectionButtons()
+                },
+                showMainButtons = {
+                    showMainButtons()
+                }
+            )
+            deleteDialog.show()
 
-            builder.setTitle("Confirm Deletion of ${deleteList.count()} items.")
-
-            val contentLayout = LinearLayout(this)
-            contentLayout.orientation = LinearLayout.VERTICAL
 
             val textView = TextView(this)
             textView.text = getString(R.string.dialog_delete_items_confirmation, deleteList.count())
-
-            val itemListTextView = TextView(this)
-            itemListTextView.textSize = 10f
-            itemListTextView.text = deleteList.joinToString(separator = "\n") { item ->
-                "- ${item.name}"
-            }
-            contentLayout.addView(textView)
-            contentLayout.addView(itemListTextView)
-            builder.setView(contentLayout)
-
-            builder.setPositiveButton("Delete") { _, _ ->
-                for (item in deleteList) {
-                    val position = directoryAdapter.getItemList().indexOf(item)
-                    if (position != -1) {
-                        if (File(item.path).isFile) {
-                            File(item.path).delete()
-                        } else {
-                            File(item.path).deleteRecursively()
-                        }
-                        UtilityHelper.removeTag(File(cacheDir, "tags.json"), File(item.path))
-                        directoryAdapter.getItemList().removeAt(position) // Remove from the adapter's list
-                        directoryAdapter.notifyItemRemoved(position)
-                    }
-
-                }
-                directoryAdapter.disableSelectionMode()
-                hideSelectionButtons()
-                showMainButtons()
-            }
-
-            builder.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            builder.show()
         }
 
         changeSelectionTagFab.setOnClickListener {
@@ -453,7 +426,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-           val customDialog = DialogChangeTag(
+           val changeDialog = DialogChangeTag(
                this,
                directoryAdapter,
                loadDirContents = {
@@ -464,9 +437,9 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                },
                showMainButtons = {
                    showMainButtons()
-               },
+               }
            )
-            customDialog.show()
+            changeDialog.show()
         }
 
         val directoryIndicator: TextView = findViewById(R.id.current_directory)
