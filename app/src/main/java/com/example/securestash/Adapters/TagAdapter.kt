@@ -11,7 +11,7 @@ import com.example.securestash.R
 
 class TagAdapter(
     private val tagList: List<Tag>,
-    private val updatePreviewTag: (Tag) -> Unit
+    updatePreviewTag: (Tag) -> Unit
 ) : RecyclerView.Adapter<TagAdapter.TagViewHolder>() {
 
     private val updatePreview = updatePreviewTag
