@@ -83,7 +83,7 @@
             android:layout_marginHorizontal="4dp"
             android:fontFamily="@font/titillum_family"
 
-            android:text="Cancel"/>
+            android:text="@string/cancel_button"/>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
             android:layout_marginHorizontal="4dp"
             android:fontFamily="@font/titillum_family"
 
-            android:text="Accept"/>
+            android:text="@string/accept_button"/>
     </LinearLayout>
 
 
