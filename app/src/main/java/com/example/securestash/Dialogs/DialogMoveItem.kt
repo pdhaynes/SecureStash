@@ -38,14 +38,14 @@ class DialogMoveItem(
         cancel.setOnClickListener(this)
 
         val basePath = File(context.filesDir, "Files").absolutePath
+         val selectedPaths = directoryAdapter.getSelectedItems().map { file -> file.path }
 
         val directoryList = UtilityHelper.recursivelyGrabFileList(File(context.filesDir, "Files"))
             .filter {
                 it.isDirectory &&
                 it.absolutePath != currentPath &&
-                !directoryAdapter.getSelectedItems().map {
-                    file -> file.path
-                }.contains(it.absolutePath)
+                !selectedPaths.contains(it.absolutePath) &&
+                selectedPaths.none { selectedPath -> it.startsWith("$selectedPath/") }
             }
             .map { file -> file.absolutePath.removePrefix("$basePath/") }
             .toMutableList()
@@ -63,7 +63,6 @@ class DialogMoveItem(
         movementSelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedOption = directoryList[position]
-                Toast.makeText(context, "Selected: $selectedOption", Toast.LENGTH_SHORT).show()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
