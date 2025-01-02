@@ -21,6 +21,7 @@ import com.example.securestash.FileDirectory
 import com.example.securestash.Helpers.Cache
 import com.example.securestash.Helpers.CryptographyHelper
 import com.example.securestash.Helpers.UtilityHelper
+import com.example.securestash.Interfaces.DirectoryAdapterListener
 import com.example.securestash.R
 import org.json.JSONObject
 import java.io.File
@@ -96,6 +97,9 @@ class DirectoryAdapter(
             itemTag.text = ""
             itemTag.visibility = View.GONE
             itemName.text = item.name
+
+            checkbox.setOnCheckedChangeListener(null)
+            checkbox.isChecked = selectedItems.contains(item)
 
             val itemPath = item.path
             val tagFile = File(itemView.context.cacheDir, "tags.json")
@@ -201,13 +205,7 @@ class DirectoryAdapter(
             }
 
             checkbox.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked && !selectedItems.contains(item)) {
-                    selectedItems.add(item)
-                } else if (selectedItems.contains(item) && !isChecked) {
-                    selectedItems.remove(item)
-                } else {
-                    selectedItems.remove(item)
-                }
+                toggleItemSelection(item)
             }
 
             itemView.setOnClickListener {
@@ -233,14 +231,18 @@ class DirectoryAdapter(
                     (itemView.context as? DirectoryAdapterListener)?.onEnableSelectionMode()
                 }
 
-                if (!checkbox.isChecked) {
-//                    if (!selectedItems.contains(item)) selectedItems.add(item)
-                    checkbox.isChecked = true
-                }
+                toggleItemSelection(item)
                 notifyItemChanged(absoluteAdapterPosition)
-
                 true
             }
+        }
+    }
+
+    private fun toggleItemSelection(item: DirectoryItem) {
+        if (selectedItems.contains(item)) {
+            selectedItems.remove(item)
+        } else {
+            selectedItems.add(item)
         }
     }
 
@@ -248,11 +250,5 @@ class DirectoryAdapter(
         private const val VIEW_TYPE_GRID = 1
         private const val VIEW_TYPE_LINEAR = 2
     }
-}
 
-
-
-
-interface DirectoryAdapterListener {
-    fun onEnableSelectionMode()
 }
