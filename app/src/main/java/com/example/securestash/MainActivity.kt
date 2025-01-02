@@ -134,8 +134,6 @@ class MainActivity : AppCompatActivity() {
                     val errMsg = "Please enter a pin."
                     loginPinStatus.text = errMsg
                     loginPinStatus.visibility = View.VISIBLE
-                    Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
-
                     loginPinField.backgroundTintList =
                         ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
 
@@ -217,8 +215,6 @@ class MainActivity : AppCompatActivity() {
                     val errMsg = "Please enter a pin."
                     signupPinStatus.text = errMsg
                     signupPinStatus.visibility = View.VISIBLE
-                    Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show()
-
                     signupPinField.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.scarlet))
                 } else if (initialPass != confirmPass) {
                     val errMsg = "PINs do not match."
