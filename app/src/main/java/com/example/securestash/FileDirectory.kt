@@ -342,14 +342,22 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         }
 
         moveSelectionFab.setOnClickListener {
+            val selectedPaths = directoryAdapter.getSelectedItems().map { file -> file.path }
+
+            if (selectedPaths.isEmpty()) {
+                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val noRecursionCheck = UtilityHelper.recursivelyGrabFileList(File(baseContext.filesDir, "Files"))
                 .filter {
                     it.isDirectory &&
                     it.absolutePath != currentDirectory.toString() &&
-                    !directoryAdapter.getSelectedItems().map {
-                            file -> file.path
-                    }.contains(it.absolutePath)
+                    !selectedPaths.contains(it.absolutePath) &&
+                    selectedPaths.none { selectedPath -> it.startsWith("$selectedPath/") }
                 }
+
+
 
             val noFolderCheck = UtilityHelper.recursivelyGrabFileList(File(baseContext.filesDir, "Files"))
                 .filter {
@@ -357,13 +365,16 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
                 }
 
             if (noFolderCheck.isEmpty()) {
-                Toast.makeText(baseContext, "There are no folders to move items into.", Toast.LENGTH_LONG).show()
+                Toast.makeText(baseContext, "You must create a folder first to move items.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
             if (noRecursionCheck.isEmpty()) {
-                Toast.makeText(baseContext, "You cannot move a folder into itself, make a new folder first.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
+                val baseDirectory = File(baseContext.filesDir, "Files")
+                if (currentDirectory == baseDirectory) {
+                    Toast.makeText(baseContext, "Nowhere to move selected folder(s).", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
             }
 
             val customDialog = DialogMoveItem(
@@ -386,7 +397,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         trashSelectionFab.setOnClickListener {
             val deleteList = directoryAdapter.getSelectedItems()
             if (deleteList.isEmpty()) {
-                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
+                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -439,7 +450,7 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
         changeSelectionTagFab.setOnClickListener {
             val selectedList = directoryAdapter.getSelectedItems()
             if (selectedList.isEmpty()) {
-                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_LONG).show()
+                Toast.makeText(baseContext, "Please select at least 1 item.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
            val customDialog = DialogChangeTag(
@@ -458,8 +469,13 @@ class FileDirectory : AppCompatActivity(), DirectoryContentLoader, DirectoryAdap
             customDialog.show()
         }
 
+        val directoryIndicator: TextView = findViewById(R.id.current_directory)
         if (currentDirectory == File(filesDir, "Files")) {
             backDirectoryFab.hide()
+            directoryIndicator.visibility = View.GONE
+        } else {
+            directoryIndicator.text = "..${currentDirectory.toString().removePrefix(File(baseContext.filesDir, "Files").toString())}"
+            directoryIndicator.visibility = View.VISIBLE
         }
 
         backDirectoryFab.setOnClickListener {
