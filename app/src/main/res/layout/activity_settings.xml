@@ -37,284 +37,353 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/directory_recycler_view"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="4dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
-        >
+
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="4dp"
+
+        android:paddingBottom="100dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="Statistics"
-                android:textSize="24sp"
-                android:fontFamily="@font/titillum_family"
-                android:textColor="@color/black"
-                />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-
-                android:visibility="gone"
-                >
+                android:orientation="vertical">
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:gravity="end"
-                    android:layout_gravity="center"
-
-                    android:text="9999"
-                    android:layout_weight="1"
+                    android:text="Statistics"
+                    android:textSize="24sp"
                     android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
+                    android:textColor="@color/black"
                     />
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginBottom="12dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
 
-                    android:gravity="start"
-                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    >
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                    android:text="Documents Shared"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
-                    />
+                        android:gravity="end"
+                        android:layout_gravity="center"
+
+                        android:text="9999"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:gravity="start"
+                        android:layout_gravity="center"
+
+                        android:text="Documents Shared"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <ProgressBar
+                        android:id="@+id/documents_loading_spinner"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:indeterminate="true"
+                        android:layout_marginEnd="8dp"
+                        android:indeterminateTint="@color/white" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/amount_documents_stored"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:layout_gravity="center"
+                        android:text=""
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp"
+
+                        android:visibility="gone" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:layout_gravity="center"
+                        android:text="Total Documents Stored"
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@color/black"
+
+                        android:textSize="18sp"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <ProgressBar
+                        android:id="@+id/image_loading_spinner"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:indeterminate="true"
+                        android:layout_marginEnd="8dp"
+                        android:indeterminateTint="@color/white"
+                        android:textSize="18sp"
+                        />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/amount_images_stored"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:layout_gravity="center"
+                        android:text=""
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:layout_gravity="center"
+                        android:text="Total Images Stored"
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <ProgressBar
+                        android:id="@+id/items_loading_spinner"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:indeterminate="true"
+                        android:layout_marginEnd="8dp"
+                        android:indeterminateTint="@color/white" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/amount_items_stored"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:layout_gravity="center"
+                        android:text=""
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="18sp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:layout_gravity="center"
+                        android:text="Total Items Stored"
+                        android:fontFamily="@font/titillum_family"
+                        android:padding="2dp"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        />
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <ProgressBar
-                    android:id="@+id/documents_loading_spinner"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:indeterminate="true"
-                    android:layout_marginEnd="8dp"
-                    android:indeterminateTint="@color/white" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/amount_documents_stored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    android:text=""
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="18sp"
-
-                    android:visibility="gone" />
-
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:layout_gravity="center"
-                    android:text="Total Documents Stored"
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
                     android:textColor="@color/black"
 
-                    android:textSize="18sp"
+                    android:text="Account"
+                    android:textSize="24sp"
+
+                    android:fontFamily="@font/titillum_family"
                     />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="220dp"
+                    android:layout_height="52dp"
+                    android:id="@+id/change_password"
+
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    app:backgroundTint="@color/brandeisblue"
+                    android:textColor="@color/white"
+                    app:cornerRadius="8dp"
+
+                    android:layout_marginHorizontal="4dp"
+                    android:fontFamily="@font/titillum_family"
+
+                    android:text="Change Pin"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="220dp"
+                    android:layout_height="52dp"
+
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    app:backgroundTint="@color/white"
+                    android:textColor="@color/scarlet"
+                    app:cornerRadius="8dp"
+
+                    android:id="@+id/delete_all_data"
+                    android:layout_marginHorizontal="4dp"
+                    android:fontFamily="@font/titillum_family"
+
+                    android:text="Delete All Data"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="220dp"
+                    android:layout_height="52dp"
+
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    app:backgroundTint="@color/white"
+                    android:textColor="@color/scarlet"
+                    app:cornerRadius="8dp"
+
+                    android:id="@+id/delete_all_data_and_account"
+                    android:layout_marginHorizontal="4dp"
+                    android:fontFamily="@font/titillum_family"
+
+                    android:text="Delete All Data &amp; Account"/>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <ProgressBar
-                    android:id="@+id/image_loading_spinner"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:indeterminate="true"
-                    android:layout_marginEnd="8dp"
-                    android:indeterminateTint="@color/white"
-                    android:textSize="18sp"
-                    />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/amount_images_stored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    android:text=""
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="18sp"
-                    android:visibility="gone" />
-
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:layout_gravity="center"
-                    android:text="Total Images Stored"
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:orientation="horizontal"
-                android:gravity="center">
+                    android:text="Support"
+                    android:textSize="24sp"
 
-                <ProgressBar
-                    android:id="@+id/items_loading_spinner"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:indeterminate="true"
-                    android:layout_marginEnd="8dp"
-                    android:indeterminateTint="@color/white" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/amount_items_stored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    android:text=""
                     android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="18sp"
-                    android:visibility="gone" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:layout_gravity="center"
-                    android:text="Total Items Stored"
-                    android:fontFamily="@font/titillum_family"
-                    android:padding="2dp"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
                     />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginBottom="12dp"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="220dp"
+                    android:layout_height="52dp"
+                    android:id="@+id/bug_report_button"
+
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    app:backgroundTint="@color/brandeisblue"
+                    android:textColor="@color/white"
+                    app:cornerRadius="8dp"
+
+                    android:layout_marginHorizontal="4dp"
+                    android:fontFamily="@font/titillum_family"
+                    app:icon="@drawable/ic_bug_48"
+                    app:iconGravity="end"
+                    app:iconTint="@color/white"
+                    android:text="Report a bug"
+                    />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="220dp"
+                    android:layout_height="52dp"
+                    android:id="@+id/show_tutorials"
+
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    app:backgroundTint="@color/viridian"
+                    android:textColor="@color/white"
+                    app:cornerRadius="8dp"
+
+                    android:layout_marginHorizontal="4dp"
+                    android:fontFamily="@font/titillum_family"
+
+                    app:icon="@drawable/ic_scroll_48"
+                    app:iconGravity="end"
+
+                    android:text="See Tutorials"
+                    app:iconTint="@color/white"
+                    />
+
+                <TextView
+                    android:id="@+id/build_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titillum_family"
+
+                    android:gravity="center"
+                    android:textColor="@color/paledogwood"
+
+                    android:text="Build x" />
+
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-
-                android:text="Account"
-                android:textSize="24sp"
-
-                android:fontFamily="@font/titillum_family"
-                />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="220dp"
-                android:layout_height="52dp"
-                android:id="@+id/change_password"
-
-                android:gravity="center"
-                android:layout_gravity="center"
-                app:backgroundTint="@color/brandeisblue"
-                android:textColor="@color/white"
-                app:cornerRadius="8dp"
-
-                android:layout_marginHorizontal="4dp"
-                android:fontFamily="@font/titillum_family"
-
-                android:text="Change Pin"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="220dp"
-                android:layout_height="52dp"
-
-                android:gravity="center"
-                android:layout_gravity="center"
-                app:backgroundTint="@color/white"
-                android:textColor="@color/scarlet"
-                app:cornerRadius="8dp"
-
-                android:id="@+id/delete_all_data"
-                android:layout_marginHorizontal="4dp"
-                android:fontFamily="@font/titillum_family"
-
-                android:text="Delete All Data"
-                />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="220dp"
-                android:layout_height="52dp"
-
-                android:gravity="center"
-                android:layout_gravity="center"
-                app:backgroundTint="@color/white"
-                android:textColor="@color/scarlet"
-                app:cornerRadius="8dp"
-
-                android:id="@+id/delete_all_data_and_account"
-                android:layout_marginHorizontal="4dp"
-                android:fontFamily="@font/titillum_family"
-
-                android:text="Delete All Data &amp; Account"/>
-
-            <TextView
-                android:id="@+id/build_code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/titillum_family"
-
-                android:gravity="center"
-                android:textColor="@color/paledogwood"
-
-                android:text="Build x" />
-
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
-
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/back_fab"
