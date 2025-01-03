@@ -1,4 +1,4 @@
-package com.example.securestash
+package com.ph.securestash
 
 import org.junit.Test
 
