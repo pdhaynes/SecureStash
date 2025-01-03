@@ -9,7 +9,7 @@
     <string name="dialog_base_tag_message">No tag</string>
     <string name="dialog_change_tag_title">Change tag for %d item(s).</string>
     <string name="dialog_delete_items_title">Delete %d item(s).</string>
-    <string name="tag_preview_title">Preview</string>
+    <string name="tag_preview">Tag</string>
     <string name="pdf_page_counter">%d/%d</string>
     <string name="dialog_delete_items_confirmation">Are you sure you want to delete these %d items?</string>
     <string name="hint_new_pin">New Pin</string>
