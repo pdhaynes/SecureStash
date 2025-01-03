@@ -151,7 +151,21 @@
             android:layout_marginHorizontal="4dp"
             android:fontFamily="@font/titillum_family"
 
-            android:text="Cancel"/>
+            android:text="@string/cancel_button"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+
+            android:layout_weight="1"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/unblue"
+
+            android:id="@+id/remove_tag"
+            android:layout_marginHorizontal="4dp"
+            android:fontFamily="@font/titillum_family"
+
+            android:text="Remove Tag"/>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
@@ -165,7 +179,7 @@
             android:layout_marginHorizontal="4dp"
             android:fontFamily="@font/titillum_family"
 
-            android:text="Accept"/>
+            android:text="@string/accept_button"/>
     </LinearLayout>
 
 

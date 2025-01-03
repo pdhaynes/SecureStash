@@ -30,6 +30,7 @@ class DialogChangeTag(
 ) : Dialog(context), View.OnClickListener {
     private lateinit var accept: MaterialButton
     private lateinit var cancel: MaterialButton
+    private lateinit var remove: MaterialButton
 
     private lateinit var newTag: String
 
@@ -44,8 +45,11 @@ class DialogChangeTag(
 
         accept = findViewById(R.id.accept_button)
         cancel = findViewById(R.id.cancel_button)
+        remove = findViewById(R.id.remove_tag)
+
         accept.setOnClickListener(this)
         cancel.setOnClickListener(this)
+        remove.setOnClickListener(this)
 
         val titleTag: TextView = findViewById(R.id.tag_change_title)
         titleTag.text = context.getString(R.string.dialog_change_tag_title, selectionList.count())
@@ -53,13 +57,25 @@ class DialogChangeTag(
         val tagFile = File(context.cacheDir, "tags.json")
         val tagList = UtilityHelper.getMostRecentTags(tagFile)
 
+        val tagsPresent: Boolean = selectionList.filter { item ->
+            UtilityHelper.getFileTag(tagFile, File(item.path)) != null
+        }.isNotEmpty()
+
+        if (tagsPresent) {
+            remove.setTextColor(context.getColor(R.color.unblue))
+            remove.isEnabled = true
+        } else {
+            remove.setTextColor(context.getColor(android.R.color.darker_gray))
+            remove.isEnabled = false
+        }
+
         val previewTag: TextView = findViewById(R.id.preview_tag)
         previewTag.background.setTint(selectedColor)
         previewTag.setTextColor(UtilityHelper.getTextColorForBackground(selectedColor))
         val newTagInput: TextInputEditText = findViewById(R.id.user_tag_input)
-        newTagInput.doOnTextChanged { text, _, _, count ->
-            if (count < 1) {
-                previewTag.text = context.getString(R.string.tag_preview_title)
+        newTagInput.doOnTextChanged { text, _, _, _ ->
+            if (text.toString().isEmpty()) {
+                previewTag.text = context.getString(R.string.tag_preview)
             } else {
                 previewTag.text = text
                 newTag = text.toString()
@@ -69,7 +85,6 @@ class DialogChangeTag(
         val colorSquare: View = findViewById(R.id.color_square)
         colorSquare.setBackgroundColor(selectedColor)
         colorSquare.setOnClickListener {
-            Toast.makeText(context, "Clicked color square", Toast.LENGTH_SHORT).show()
             val colorDialog = AmbilWarnaDialog(context, selectedColor, object : AmbilWarnaDialog.OnAmbilWarnaListener {
                 override fun onOk(dialog: AmbilWarnaDialog?, color: Int) {
                     selectedColor = color
@@ -99,7 +114,6 @@ class DialogChangeTag(
 
         lvTags.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         lvTags.adapter = tagAdapter
-
     }
 
     override fun onClick(v: View?) {
@@ -119,6 +133,23 @@ class DialogChangeTag(
                 dirAdapter.disableSelectionMode()
                 hideSelectionButtons()
                 showMainButtons()
+            }
+            R.id.remove_tag -> {
+                if (remove.isEnabled) {
+                    val tagFile = File(context.cacheDir, "tags.json")
+                    for (item in selectionList) {
+                        UtilityHelper.removeTag(
+                            tagFile = tagFile,
+                            targetDirectoryPath = File(item.path)
+                        )}
+                    loadDirContents.invoke()
+                    dirAdapter.disableSelectionMode()
+                    hideSelectionButtons()
+                    showMainButtons()
+                    dismiss()
+                } else {
+                    Toast.makeText(context, "No tags to remove.", Toast.LENGTH_SHORT).show()
+                }
             }
             R.id.cancel_button -> dismiss()
         }
