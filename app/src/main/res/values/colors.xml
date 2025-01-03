@@ -2,6 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="onyx">#3D3D3D</color>
+    <color name="viridian">#578E7E</color>
+    <color name="cosmic_latte">#FFFAEC</color>
+    <color name="parchment">#F5ECD5</color>
+    <color name="indigo_dye">#284B63</color>
+    <color name="platinum">#E2E2E2</color>
+    <color name="cream">#F9FBB2</color>
+
     <color name="spacecadet">#1B1B3A</color>
     <color name="brandeisblue">#0166FF</color>
     <color name="unblue">#3993DD</color>
