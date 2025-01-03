@@ -123,6 +123,17 @@
 
             android:fontFamily="@font/titillum_family"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_tags_text"
+            android:text="No Recent Tags found."
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center"
+
+            android:fontFamily="@font/titillum_family"
+            android:visibility="gone"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tag_list"
             android:layout_width="match_parent"
@@ -165,7 +176,9 @@
             android:layout_marginHorizontal="4dp"
             android:fontFamily="@font/titillum_family"
 
-            android:text="Remove Tag"/>
+            android:text="Remove Tag"
+            android:allowClickWhenDisabled="true"
+            />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
