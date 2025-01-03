@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Unnamed">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-02T20:30:43.497845Z">
+        <DropdownSelection timestamp="2025-01-03T03:55:51.701653400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCX706J0CV" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Peyton\.android\avd\Medium_Phone_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
