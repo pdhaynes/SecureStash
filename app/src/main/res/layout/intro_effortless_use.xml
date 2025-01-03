@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/unblue"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    >
+
+    <ImageView
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:src="@drawable/ic_relieved_48"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        app:tint="@color/white"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Effortless to Use"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/titillum_family"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No need for complicated setups or confusing interfaces. SecureStash provides a simple, intuitive design — just upload your files, and let the app handle the rest.\n\nProtecting your information has never been easier."
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:fontFamily="@font/titillum_family"/>
+
+
+</LinearLayout>

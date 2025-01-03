@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/indigo_dye"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    >
+
+    <ImageView
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:src="@drawable/ic_local_48"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        app:tint="@color/platinum"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have complete control"
+        android:textColor="@color/platinum"
+        android:textSize="32sp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/titillum_family"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="With SecureStash, you own your data. All files are stored locally on your device — not in a cloud.\n\nNo cloud means no third-party access and no risk of a security breach exposing all of your info.\n\nYour files are always under your control."
+        android:textColor="@color/platinum"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:fontFamily="@font/titillum_family"/>
+
+
+</LinearLayout>
