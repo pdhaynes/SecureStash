@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.securestash"
+    namespace = "com.ph.securestash"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.securestash"
+        applicationId = "com.ph.securestash"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,9 +39,11 @@ android {
 }
 
 dependencies {
+
     val work_version = "2.9.1"
     implementation("androidx.work:work-runtime-ktx:$work_version")
     implementation("androidx.work:work-multiprocess:$work_version")
+    implementation("com.github.AppIntro:AppIntro:6.3.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
