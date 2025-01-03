@@ -322,8 +322,8 @@
 
         android:layout_marginBottom="24dp"
 
-        app:tint="@color/brandeisblue"
-        android:backgroundTint="@color/white"
+        app:tint="@color/white"
+        android:backgroundTint="@color/brandeisblue"
         android:visibility="gone"
 
         />
@@ -345,8 +345,8 @@
 
         android:layout_marginBottom="24dp"
 
-        app:tint="@color/brandeisblue"
-        android:backgroundTint="@color/white"
+        app:tint="@color/white"
+        android:backgroundTint="@color/brandeisblue"
 
         android:visibility="gone"
 
@@ -368,8 +368,8 @@
 
         android:layout_marginBottom="24dp"
 
-        app:tint="@color/brandeisblue"
-        android:backgroundTint="@color/white"
+        app:tint="@color/white"
+        android:backgroundTint="@color/brandeisblue"
         android:visibility="gone"
 
         />
@@ -390,8 +390,8 @@
 
         android:layout_marginBottom="24dp"
 
-        app:tint="@color/brandeisblue"
-        android:backgroundTint="@color/white"
+        app:tint="@color/white"
+        android:backgroundTint="@color/brandeisblue"
 
         android:visibility="gone"
 
